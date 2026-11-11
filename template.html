@@ -424,7 +424,7 @@ app.addEventListener('submit',function(e){
   var ti=document.getElementById('qa-t'),v=ti.value.trim();if(!v)return;
   var id='x:'+Date.now(),pj=(pfilter&&pfilter!=='__none')?pfilter:'';
   manual.push({id:id,type:'todo',title:v,project:pj,base:today(),due:document.getElementById('qa-d').value||'',note:'',done:false});
-  save('mt_manual',manual);sel=id;render();var n=document.getElementById('qa-t');if(n)n.focus();
+  save('mt_manual',manual);render();var n=document.getElementById('qa-t');if(n)n.focus();
 });
 setInterval(function(){var a=document.activeElement;if(!formOpen&&!(a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.value))))location.reload();},300000);
 </script>
