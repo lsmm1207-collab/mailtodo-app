@@ -23,7 +23,7 @@ main{padding:24px clamp(14px,2vw,28px) 32px;display:flex;flex-direction:column;g
 .chip{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #F3D9CF;border-radius:999px;padding:6px 18px 6px 6px;box-shadow:var(--sh)}
 .chip .ic{width:34px;height:34px;border-radius:50%;background:var(--coral);display:flex;align-items:center;justify-content:center}
 .chip .l{font-size:14px}.chip .n{font-size:24px;font-weight:800;color:var(--coral-d)}
-.body{display:grid;grid-template-columns:232px minmax(320px,440px) minmax(0,1fr);gap:24px;align-items:start}
+.body{display:grid;grid-template-columns:minmax(320px,440px) minmax(0,1fr);gap:24px;align-items:start}
 .side{display:flex;flex-direction:column;gap:16px}
 .nav{background:#fff;border-radius:24px;padding:14px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--sh)}
 .nv{display:flex;align-items:center;gap:12px;padding:0 14px;min-height:48px;border-radius:14px;border:0;background:transparent;color:#3A4452;font-size:15px;font-weight:500;cursor:pointer;text-align:left;width:100%}
@@ -32,7 +32,7 @@ main{padding:24px clamp(14px,2vw,28px) 32px;display:flex;flex-direction:column;g
 .addb{min-height:48px;border:0;border-radius:16px;background:var(--coral);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
 .note{font-size:12px;color:var(--mut);line-height:1.6;padding:0 6px}
 .mid{display:flex;flex-direction:column;gap:12px}
-.mh{display:flex;align-items:baseline;gap:10px}.mh .e{font-size:34px;font-weight:800}.mh .k{font-size:14px;color:var(--mut)}
+.mh{display:flex;align-items:baseline;gap:10px}.mh .e{font-size:26px;font-weight:800}.mh .k{font-size:14px;color:var(--mut)}
 .ul{width:220px;height:5px;border-radius:3px;background:#F6C9B8;margin-top:-4px}
 .it{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .it[aria-current=true]{border:2px solid var(--coral);padding:13px 15px}
@@ -75,7 +75,7 @@ input,select{font-size:15px;min-height:44px;padding:0 10px;border:1px solid #B9B
 .lk{display:inline-flex;align-items:center;text-decoration:none}
 textarea{font-size:15px;padding:8px 10px;border:1px solid #B9B6AA;border-radius:10px;background:#fff;color:var(--ink);resize:vertical;width:100%}
 .box textarea{margin-top:6px}
-.qa{display:flex;gap:8px;align-items:center}.qa #qa-t{flex:1;min-width:0}.qa #qa-d{width:150px}.qa .b1{min-height:44px;padding:0 16px}
+.qa{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px;align-items:center}.qa #qa-t{flex:1 1 180px;min-width:0}.qa #qa-d{width:150px}.qa .b1{min-height:44px;padding:0 16px}
 .dz{border:2px dashed #F2B8A0;background:#FFF7F3;border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px;cursor:pointer;font-size:14px;color:var(--ink)}.dz span{font-size:12px;color:var(--mut)}.dz.on,.dz:focus-visible{border-color:var(--coral);background:#FFEDE5;outline:none}.dzs{font-size:12px;color:#8A3A12;min-height:0}.dzs:empty{display:none}
 .notice{background:#FFF1D6;color:#8A5300;border-radius:16px;padding:12px 16px;font-size:14px}
 .pr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.pr .l{font-size:13px;color:var(--mut)}
@@ -101,7 +101,7 @@ textarea{font-size:15px;padding:8px 10px;border:1px solid #B9B6AA;border-radius:
 .hm-nav{display:flex;gap:4px;background:#fff;border-radius:14px;padding:5px;box-shadow:var(--sh);flex-wrap:wrap}
 .hm-nav button{font:inherit;font-size:15px;padding:10px 16px;border-radius:10px;border:0;background:transparent;color:#667085;cursor:pointer;min-height:44px}
 .hm-nav button[aria-current=true]{background:#E8541A;color:#fff;font-weight:700}
-.hm-nav .hm-add{border:1.5px solid #E8541A;color:#C2410C;font-weight:700;margin-left:6px;background:#fff}
+.hm-nav em{font-style:normal;font-size:12px;margin-left:6px;opacity:.75}.hm-nav .hm-add{border:1.5px solid #E8541A;color:#C2410C;font-weight:700;margin-left:6px;background:#fff}
 .hm-r1{display:flex;gap:18px;flex-wrap:wrap}
 .hm-hero{flex:1.2;min-width:300px;background:#E8541A;color:#fff;border-radius:18px;padding:22px 26px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;font-size:16px;box-shadow:var(--sh)}
 .hm-hn{display:flex;align-items:flex-end;gap:18px}.hm-hn b{font-size:80px;font-weight:800;line-height:.95}.hm-hn span{font-size:16px;line-height:1.6;padding-bottom:4px}
@@ -135,7 +135,7 @@ textarea{font-size:15px;padding:8px 10px;border:1px solid #B9B6AA;border-radius:
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611120900';
+const TVER='202611120930';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -360,14 +360,17 @@ function detail(x){
 }
 var VN={home:['Dashboard','대시보드'],me:['To reply','내가 회신'],all:['Overview','전체'],wait:['Replies','상대 회신 대기'],todo:['Tasks','할 일'],done:['Done','완료'],trash:['Trash','삭제함']};
 function urg(x){return x.kind==='todo'?(x.due?x.dd:9999):(5-x.days);}
+function hmTop(cnt){
+  var d=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
+  var tabs=['home','all','todo','me','wait','done','trash'];
+  return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
+}
 function homeHtml(all,cnt,hot,dueNow){
   var o=all.filter(function(x){return !x.trash&&!x.done;});
   var me=o.filter(function(x){return x.kind==='me';}), wt=o.filter(function(x){return x.kind==='wait';}), td=o.filter(function(x){return x.kind==='todo';});
   var late=td.filter(function(x){return x.due&&x.dd<0;}), tod=td.filter(function(x){return x.due&&x.dd===0;}), wk=td.filter(function(x){return x.due&&x.dd>0&&x.dd<=6;}), later=td.filter(function(x){return !x.due||x.dd>6;});
   var oldest=function(a){return a.reduce(function(m,x){return Math.max(m,x.days);},0);};
-  var d=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
-  var tabs=['home','all','todo','me','wait','done','trash'];
-  var h='<div class="hm"><div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k==='home'?'true':'false')+'">'+VN[k][1]+'</button>';}).join('')+'<button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
+  var h='<div class="hm">'+hmTop(cnt);
   if(!DATA)h+='<div class="notice">아직 메일 데이터가 없습니다. MailTodo.ps1을 한 번 실행하면 채워집니다. 할 일은 지금도 쓸 수 있습니다.</div>';
   h+='<div class="hm-r1"><div class="hm-hero"><div>오늘 처리할 일</div><div class="hm-hn"><b>'+(late.length+tod.length)+'</b><span>지연 '+late.length+'건 · 오늘 마감 '+tod.length+'건<br>이번 주 마감 '+wk.length+'건</span></div></div>'+
     '<div class="hm-k"><span>중요</span><b style="color:#E8541A">'+hot+'</b><span>직접 고른 항목</span></div>'+
@@ -403,17 +406,10 @@ function render(){
   var rk={h:0,n:1,l:2};list.sort(function(a,b){if(view==='all'){var ua=urg(a),ub=urg(b);return (rk[a.prio]-rk[b.prio])||(ua-ub);}if(a.kind==='todo'&&b.kind==='todo'&&a.dd!==b.dd)return a.dd-b.dd;return (rk[a.prio]-rk[b.prio])||(b.days-a.days);});
   if(!list.some(function(x){return x.id===sel;}))sel=list.length?list[0].id:null;
   var cur=list.filter(function(x){return x.id===sel;})[0]||null;
-  var d=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
-  var h='<section class="hero"><div class="art">'+art()+'</div><div class="brand"><div class="a">TO DO LIST</div><div class="b">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+'</div></div>'+
-    '<div class="chips"><div class="chip"><span class="ic">'+ico('mail')+'</span><span class="l">내가 회신</span><span class="n">'+cnt.me+'</span></div><div class="chip"><span class="ic">'+ico('mail')+'</span><span class="l">상대 회신 대기</span><span class="n">'+cnt.wait+'</span></div>'+
-    '<div class="chip"><span class="ic">'+ico('clock')+'</span><span class="l">중요</span><span class="n">'+hot+'</span></div>'+
-    '<div class="chip"><span class="ic">'+ico('check')+'</span><span class="l">할 일</span><span class="n">'+cnt.todo+'</span></div>'+
-    '<div class="chip"><span class="ic">'+ico('clock')+'</span><span class="l">오늘·지연</span><span class="n">'+dueNow+'</span></div></div></section>';
+  var h='<div class="hm">'+hmTop(cnt);
   if(!DATA)h+='<div class="notice">아직 메일 데이터가 없습니다. MailTodo.ps1을 한 번 실행하면 채워집니다. 수동 추가는 지금도 쓸 수 있습니다.</div>';
-  function nv(k,ic){return '<button class="nv" data-act="view" data-id="'+k+'" aria-current="'+(view===k?'true':'false')+'">'+ico(ic,view===k?'#C2410C':'#6B7684')+'<span class="t">'+VN[k][1]+'</span><span class="c">'+cnt[k]+'</span></button>';}
-  h+='<div class="body"><div class="side"><nav class="nav" aria-label="보기">'+nv('home','list')+nv('all','list')+nv('me','mail')+nv('wait','mail')+nv('todo','list')+nv('done','check')+nv('trash','trash')+'</nav>'+
-    '<button class="addb" data-act="open">'+ico('plus')+'직접 추가</button><div class="note">중요도는 항목마다 직접 고를 수 있고, 위의 "중요" 숫자는 높음으로 고른 개수입니다.<br>할 일은 기한을 정하면 지연·오늘·예정으로 보입니다.</div></div>';
-  h+='<div class="mid"><div class="mh"><div class="e">'+VN[view][0]+'</div><div class="k">'+VN[view][1]+'</div></div><div class="ul"></div><div class="pfw"><label class="l" for="pf">프로젝트</label><select id="pf" aria-label="프로젝트 필터"><option value="">전체</option>'+projList.map(function(n){return '<option value="'+esc(n)+'"'+(pfilter===n?' selected':'')+'>'+esc(n)+'</option>';}).join('')+'<option value="__none"'+(pfilter==='__none'?' selected':'')+'>미분류</option></select></div>';
+  h+='<div class="body">';
+  h+='<div class="mid"><div class="mh"><div class="e">'+VN[view][1]+'</div></div><div class="ul"></div><div class="pfw"><label class="l" for="pf">프로젝트</label><select id="pf" aria-label="프로젝트 필터"><option value="">전체</option>'+projList.map(function(n){return '<option value="'+esc(n)+'"'+(pfilter===n?' selected':'')+'>'+esc(n)+'</option>';}).join('')+'<option value="__none"'+(pfilter==='__none'?' selected':'')+'>미분류</option></select></div>';
   if((view==='todo'||view==='all')&&!formOpen)h+='<form id="qa" class="qa"><input id="qa-t" placeholder="할 일을 입력하고 Enter" maxlength="120" aria-label="할 일 빠른 추가" autocomplete="off"><input id="qa-d" type="date" aria-label="기한 (선택)"><button class="b1" type="submit">추가</button></form>';
   if(formOpen){
     h+='<form id="f"><div class="dz" id="dz" tabindex="0" role="button" aria-label="메일 파일 올리기"><b>Outlook 메일 파일 올리기 (.msg / .eml)</b><span>여기로 끌어다 놓거나 눌러서 고르세요. 제목·날짜·요지·프로젝트를 자동으로 채웁니다. 여러 개를 한 번에 올리면 바로 추가됩니다.</span><input type="file" id="mf" accept=".msg,.eml" multiple hidden></div><div class="dzs" id="dzs" aria-live="polite"></div><label>구분<select id="f-type"><option value="todo">할 일 (업무, 받은 메일 등)</option><option value="wait">회신 대기 (내가 보낸 메일)</option></select></label>'+
@@ -428,7 +424,7 @@ function render(){
     go=go.filter(function(n){return n!==''&&gm[n].length;}).concat(gm['']&&gm[''].length?['']:[]);
     go.forEach(function(n){var c=!!col[n||'__none'];h+='<button class="gh" data-act="gt" data-id="'+esc(n||'__none')+'" aria-expanded="'+(c?'false':'true')+'"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate('+(c?-90:0)+'deg);transition:transform .15s"><path d="M6 9l6 6 6-6"/></svg>'+esc(n||'미분류')+'<b>'+gm[n].length+'</b></button>'+(c?'':gm[n].map(listItem).join(''));});
   }else h+=list.map(listItem).join('');
-  h+='</div>'+detail(cur)+'</div>';
+  h+='</div>'+detail(cur)+'</div></div>';
   app.innerHTML=h; if(!formOpen)mi=null;
   if(cur&&(cur.src==='mail'||cur.file))ensureTr(cur);
   var f=document.getElementById('f');
