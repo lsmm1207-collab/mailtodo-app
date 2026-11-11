@@ -103,13 +103,13 @@ textarea{font-size:15px;padding:8px 10px;border:1px solid #B9B6AA;border-radius:
 .hm-nav button[aria-current=true]{background:#E8541A;color:#fff;font-weight:700}
 .hm-nav em{font-style:normal;font-size:12px;margin-left:6px;opacity:.75}.hm-nav .hm-add{border:1.5px solid #E8541A;color:#C2410C;font-weight:700;margin-left:6px;background:#fff}
 .hm-r1{display:flex;gap:18px;flex-wrap:wrap}
-.hm-hero{flex:1.2;min-width:300px;background:#E8541A;color:#fff;border-radius:18px;padding:22px 26px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;font-size:16px;box-shadow:var(--sh)}
+.hm-hero{border:0;text-align:left;font-family:inherit;cursor:pointer;flex:1.2;min-width:300px;background:#E8541A;color:#fff;border-radius:18px;padding:22px 26px;display:flex;flex-direction:column;justify-content:space-between;gap:14px;font-size:16px;box-shadow:var(--sh)}
 .hm-hn{display:flex;align-items:flex-end;gap:18px}.hm-hn b{font-size:80px;font-weight:800;line-height:.95}.hm-hn span{font-size:16px;line-height:1.6;padding-bottom:4px}
 .hm-turn{flex:1.6;min-width:320px;display:flex;flex-direction:column;gap:14px}
 .hm-tc{width:100%;display:flex;align-items:center;gap:18px;background:#F8F9FB;border:0;border-radius:14px;padding:14px 18px;margin-top:10px;cursor:pointer;text-align:left;font:inherit;color:inherit}
 .hm-tc b{font-size:42px;font-weight:800;min-width:56px;line-height:1}.hm-tc span{font-size:14px;color:#667085;line-height:1.6}.hm-tc i{display:block;font-style:normal;font-size:17px;font-weight:700;color:var(--ink);margin-bottom:2px}
 .hm-side{flex:.7;min-width:170px;display:flex;flex-direction:column;gap:14px}
-.hm-k{flex:1;background:#fff;border-radius:18px;padding:16px 20px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:4px;font-size:14px;color:#667085}.hm-k b{font-size:40px;font-weight:800;line-height:1.05;color:var(--ink)}
+.hm-k{border:0;text-align:left;font-family:inherit;color:inherit;cursor:pointer;flex:1;background:#fff;border-radius:18px;padding:16px 20px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:4px;font-size:14px;color:#667085}.hm-k b{font-size:40px;font-weight:800;line-height:1.05;color:var(--ink)}
 .hm-r2{display:flex;gap:18px;flex-wrap:wrap}
 .hm-c{background:#fff;border-radius:18px;padding:22px 26px;box-shadow:var(--sh);min-width:320px}
 .hm-c h3{margin:0 0 4px;font-size:18px;font-weight:800}.hm-s{font-size:14px;color:#667085;margin-bottom:6px}
@@ -135,7 +135,7 @@ textarea{font-size:15px;padding:8px 10px;border:1px solid #B9B6AA;border-radius:
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611120930';
+const TVER='202611120950';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -365,6 +365,15 @@ function hmTop(cnt){
   var tabs=['home','all','todo','me','wait','done','trash'];
   return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
 }
+function sumHtml(all,hot){
+  var o=all.filter(function(x){return !x.trash&&!x.done;});
+  var me=o.filter(function(x){return x.kind==='me';}), wt=o.filter(function(x){return x.kind==='wait';}), td=o.filter(function(x){return x.kind==='todo';});
+  var late=td.filter(function(x){return x.due&&x.dd<0;}), tod=td.filter(function(x){return x.due&&x.dd===0;}), wk=td.filter(function(x){return x.due&&x.dd>0&&x.dd<=6;});
+  return '<div class="hm-r1"><button class="hm-hero" data-act="view" data-id="todo"><div>오늘 처리할 일</div><div class="hm-hn"><b>'+(late.length+tod.length)+'</b><span>지연 '+late.length+'건 · 오늘 마감 '+tod.length+'건<br>이번 주 마감 '+wk.length+'건</span></div></button>'+
+    '<button class="hm-k" data-act="view" data-id="all"><span>중요</span><b style="color:#E8541A">'+hot+'</b><span>직접 고른 항목</span></button>'+
+    '<button class="hm-k" data-act="view" data-id="todo"><span>진행 중인 할 일</span><b>'+td.length+'</b><span>기한 없음 '+td.filter(function(x){return !x.due;}).length+'건 포함</span></button>'+
+    '<button class="hm-k" data-act="view" data-id="me"><span>메일에서 온 일</span><b style="color:#2F6FDE">'+(me.length+wt.length)+'</b><span>내가 회신 '+me.length+' · 상대 대기 '+wt.length+'</span></button></div>';
+}
 function homeHtml(all,cnt,hot,dueNow){
   var o=all.filter(function(x){return !x.trash&&!x.done;});
   var me=o.filter(function(x){return x.kind==='me';}), wt=o.filter(function(x){return x.kind==='wait';}), td=o.filter(function(x){return x.kind==='todo';});
@@ -372,10 +381,7 @@ function homeHtml(all,cnt,hot,dueNow){
   var oldest=function(a){return a.reduce(function(m,x){return Math.max(m,x.days);},0);};
   var h='<div class="hm">'+hmTop(cnt);
   if(!DATA)h+='<div class="notice">아직 메일 데이터가 없습니다. MailTodo.ps1을 한 번 실행하면 채워집니다. 할 일은 지금도 쓸 수 있습니다.</div>';
-  h+='<div class="hm-r1"><div class="hm-hero"><div>오늘 처리할 일</div><div class="hm-hn"><b>'+(late.length+tod.length)+'</b><span>지연 '+late.length+'건 · 오늘 마감 '+tod.length+'건<br>이번 주 마감 '+wk.length+'건</span></div></div>'+
-    '<div class="hm-k"><span>중요</span><b style="color:#E8541A">'+hot+'</b><span>직접 고른 항목</span></div>'+
-    '<div class="hm-k"><span>진행 중인 할 일</span><b>'+td.length+'</b><span>기한 없음 '+td.filter(function(x){return !x.due;}).length+'건 포함</span></div>'+
-    '<div class="hm-k"><span>메일에서 온 일</span><b style="color:#2F6FDE">'+(me.length+wt.length)+'</b><span>내가 회신 '+me.length+' · 상대 대기 '+wt.length+'</span></div></div>';
+  h+=sumHtml(all,hot);
   h+='<form id="qa" class="qa hm-qa"><input id="qa-t" placeholder="할 일을 입력하고 Enter (예: 협력사 견적 비교표 작성)" maxlength="120" aria-label="할 일 빠른 추가" autocomplete="off"><input id="qa-d" type="date" aria-label="기한 (선택)"><button class="b1" type="submit">추가</button></form>';
   var rk={h:0,n:1,l:2};
   function sec(title,arr,cls){if(!arr.length)return '';arr=arr.slice().sort(function(a,b){return (a.due&&b.due?a.dd-b.dd:0)||(rk[a.prio]-rk[b.prio]);});
@@ -408,6 +414,7 @@ function render(){
   var cur=list.filter(function(x){return x.id===sel;})[0]||null;
   var h='<div class="hm">'+hmTop(cnt);
   if(!DATA)h+='<div class="notice">아직 메일 데이터가 없습니다. MailTodo.ps1을 한 번 실행하면 채워집니다. 수동 추가는 지금도 쓸 수 있습니다.</div>';
+  h+=sumHtml(all,hot);
   h+='<div class="body">';
   h+='<div class="mid"><div class="mh"><div class="e">'+VN[view][1]+'</div></div><div class="ul"></div><div class="pfw"><label class="l" for="pf">프로젝트</label><select id="pf" aria-label="프로젝트 필터"><option value="">전체</option>'+projList.map(function(n){return '<option value="'+esc(n)+'"'+(pfilter===n?' selected':'')+'>'+esc(n)+'</option>';}).join('')+'<option value="__none"'+(pfilter==='__none'?' selected':'')+'>미분류</option></select></div>';
   if((view==='todo'||view==='all')&&!formOpen)h+='<form id="qa" class="qa"><input id="qa-t" placeholder="할 일을 입력하고 Enter" maxlength="120" aria-label="할 일 빠른 추가" autocomplete="off"><input id="qa-d" type="date" aria-label="기한 (선택)"><button class="b1" type="submit">추가</button></form>';
