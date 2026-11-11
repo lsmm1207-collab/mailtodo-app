@@ -135,7 +135,7 @@ textarea{font-size:15px;padding:8px 10px;border:1px solid #B9B6AA;border-radius:
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611120950';
+const TVER='202611121000';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -225,7 +225,7 @@ function md(iso){return String(iso||'').slice(5,10);}
 function tier(d){return 'w';}
 var TN={h:'오늘',w:'대기',t:'할 일',u:'지연'};
 function dueInfo(due){if(!due)return {k:'none',d:1e9,l:''};var d=Math.round((new Date(due)-new Date(today()))/864e5);return {k:d<0?'late':d===0?'today':'soon',d:d,l:d<0?'D+'+(-d):d===0?'오늘':'D-'+d};}
-function pt(x){if(x.kind==='me')return '회신 필요';return x.kind==='todo'?({u:'지연',h:'오늘',w:'예정',t:'할 일'})[x.tier]:TN[x.tier];}
+function pt(x){if(x.kind==='me')return '회신할 메일';return x.kind==='todo'?({u:'지연',h:'오늘',w:'예정',t:'할 일'})[x.tier]:TN[x.tier];}
 var IC={
  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
@@ -308,7 +308,7 @@ function nextText(x){
   if(x.src==='manual'&&x.kind==='todo'&&x.due){return x.dd<0?'기한이 '+(-x.dd)+'일 지났습니다. 오늘 처리하거나 기한을 조정하세요.':x.dd===0?'오늘까지입니다.':'기한까지 '+x.dd+'일 남았습니다.';}
   if(x.src==='manual'&&x.kind==='todo'&&!x.file)return '기한이 없는 할 일입니다. 필요하면 기한을 정해 두세요. 끝나면 "완료"를 누르세요.';
   if(x.src==='manual'&&x.file&&x.kind==='todo')return '받은 메일입니다. 요청 요지를 확인하고 처리한 뒤 "완료"를 누르세요.';
-  if(x.src==='manual')return x.kind==='wait'?'직접 추가한 항목입니다. 답을 받으면 "회신 확인"을 누르세요.':'직접 추가한 할 일입니다. 끝나면 "완료"를 누르세요.';
+  if(x.src==='manual')return x.kind==='wait'?'직접 추가한 항목입니다. 답을 받으면 "회신 받음"을 누르세요.':'직접 추가한 할 일입니다. 끝나면 "완료"를 누르세요.';
   if(x.kind==='me')return '받은 지 '+x.days+'일 지났습니다. 회신한 뒤 "회신 완료"를 누르세요. Outlook에서 이미 회신했다면 다음 갱신 때 자동으로 빠집니다.';
   return '메일을 '+x.count+'회 보냈고, 마지막 발송 후 '+x.lastDays+'일 지났습니다.';
 }
@@ -320,7 +320,7 @@ function stepsHtml(x){
 function listItem(x){
   var t=x.tier, circ=(x.kind==='todo'&&x.due)?'<div class="dc t-'+t+'"><div class="n" style="font-size:'+(x.dl.length>3?'15px':'20px')+'">'+esc(x.dl)+'</div><div class="u">'+(x.dd<0?'지연':'마감')+'</div></div>':(x.kind==='wait'||x.kind==='me')?'<div class="dc t-'+t+'"><div class="n">'+x.days+'</div><div class="u">일</div></div>':'<div class="dc t-t">'+ico('check','#2B4C8C',22)+'</div>';
   return '<button class="it'+(x.done?' dim':'')+'" data-act="sel" data-id="'+esc(x.id)+'" aria-current="'+(x.id===sel?'true':'false')+'">'+circ+
-    '<div class="im"><div class="tt">'+esc(x.title)+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'상대 회신 대기':x.kind==='me'?'내가 회신':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+t+'">'+pt(x)+'</span></button>';
+    '<div class="im"><div class="tt">'+esc(x.title)+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+t+'">'+pt(x)+'</span></button>';
 }
 function detail(x){
   if(!x)return '<div class="det"><div class="bar"></div><div class="dp"><div class="empty">왼쪽에서 항목을 선택하세요.</div></div></div>';
@@ -328,7 +328,7 @@ function detail(x){
   h+=trNotice(x);
   if(x.kind==='wait'||x.kind==='me'){
     if(x.src==='mail'&&x.kind==='wait')h+=stepsHtml(x);
-    h+='<div class="tiles"><div class="tile"><div class="l">경과일</div><div class="v">D+'+x.days+'</div><div class="s">'+(x.kind==='me'?'받은 날 ':x.src==='mail'?'첫 발송 ':(x.file&&x.kind==='todo'?'받은 날 ':'기준일 '))+esc(md(x.first))+'</div></div>'+
+    h+='<div class="tiles"><div class="tile"><div class="l">경과일</div><div class="v">'+(x.kind==='me'?x.days+'일':'D+'+x.days)+'</div><div class="s">'+(x.kind==='me'?'받은 날 ':x.src==='mail'?'첫 발송 ':(x.file&&x.kind==='todo'?'받은 날 ':'기준일 '))+esc(md(x.first))+'</div></div>'+
       (x.src==='mail'&&x.kind==='wait'?'<div class="tile"><div class="l">발송 횟수</div><div class="v">'+x.count+'회</div><div class="s">마지막 '+esc(md(x.last))+'</div></div>':'')+
       '<div class="tile"><div class="l">중요도</div><div class="v">'+({h:'높음',n:'보통',l:'낮음'})[x.prio]+'</div><div class="s">직접 지정</div></div></div>';
   }
@@ -354,11 +354,11 @@ function detail(x){
   else{
     if(x.entry)h+='<a class="b2 lk" href="mailtodo:open?id='+encodeURIComponent(x.entry)+'&amp;s='+encodeURIComponent(x.title)+'" title="Outlook에서 메일을 엽니다">Outlook에서 메일 열기</a><button class="b2" data-act="cp" data-id="'+id+'" title="Outlook 검색창에 붙여넣기용">제목 복사</button>';
     h+='<button class="b3" data-act="del" data-id="'+id+'">삭제</button>';
-    h+=x.done?'<button class="b2" data-act="toggle" data-id="'+id+'">되돌리기</button>':'<button class="b1" data-act="toggle" data-id="'+id+'">'+(x.kind==='wait'?'회신 확인':x.kind==='me'?'회신 완료':'완료')+'</button>';
+    h+=x.done?'<button class="b2" data-act="toggle" data-id="'+id+'">되돌리기</button>':'<button class="b1" data-act="toggle" data-id="'+id+'">'+(x.kind==='wait'?'회신 받음':x.kind==='me'?'회신 완료':'완료')+'</button>';
   }
   return h+'</div></div></div>';
 }
-var VN={home:['Dashboard','대시보드'],me:['To reply','내가 회신'],all:['Overview','전체'],wait:['Replies','상대 회신 대기'],todo:['Tasks','할 일'],done:['Done','완료'],trash:['Trash','삭제함']};
+var VN={home:['Dashboard','대시보드'],me:['To reply','회신할 메일'],all:['Overview','전체'],wait:['Replies','회신 대기'],todo:['Tasks','할 일'],done:['Done','완료'],trash:['Trash','삭제함']};
 function urg(x){return x.kind==='todo'?(x.due?x.dd:9999):(5-x.days);}
 function hmTop(cnt){
   var d=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
@@ -370,9 +370,9 @@ function sumHtml(all,hot){
   var me=o.filter(function(x){return x.kind==='me';}), wt=o.filter(function(x){return x.kind==='wait';}), td=o.filter(function(x){return x.kind==='todo';});
   var late=td.filter(function(x){return x.due&&x.dd<0;}), tod=td.filter(function(x){return x.due&&x.dd===0;}), wk=td.filter(function(x){return x.due&&x.dd>0&&x.dd<=6;});
   return '<div class="hm-r1"><button class="hm-hero" data-act="view" data-id="todo"><div>오늘 처리할 일</div><div class="hm-hn"><b>'+(late.length+tod.length)+'</b><span>지연 '+late.length+'건 · 오늘 마감 '+tod.length+'건<br>이번 주 마감 '+wk.length+'건</span></div></button>'+
-    '<button class="hm-k" data-act="view" data-id="all"><span>중요</span><b style="color:#E8541A">'+hot+'</b><span>직접 고른 항목</span></button>'+
+    '<button class="hm-k" data-act="view" data-id="all"><span>중요</span><b style="color:#E8541A">'+hot+'</b><span>중요로 표시한 항목</span></button>'+
     '<button class="hm-k" data-act="view" data-id="todo"><span>진행 중인 할 일</span><b>'+td.length+'</b><span>기한 없음 '+td.filter(function(x){return !x.due;}).length+'건 포함</span></button>'+
-    '<button class="hm-k" data-act="view" data-id="me"><span>메일에서 온 일</span><b style="color:#2F6FDE">'+(me.length+wt.length)+'</b><span>내가 회신 '+me.length+' · 상대 대기 '+wt.length+'</span></button></div>';
+    '<button class="hm-k" data-act="view" data-id="me"><span>메일 회신</span><b style="color:#2F6FDE">'+(me.length+wt.length)+'</b><span>회신할 메일 '+me.length+' · 회신 대기 '+wt.length+'</span></button></div>';
 }
 function homeHtml(all,cnt,hot,dueNow){
   var o=all.filter(function(x){return !x.trash&&!x.done;});
@@ -390,10 +390,10 @@ function homeHtml(all,cnt,hot,dueNow){
   h+='<div class="hm-r2"><div class="hm-c" style="flex:1.8"><h3>내 할 일</h3><div class="hm-s">기한이 급한 순서입니다</div>'+
     (td.length?sec('지연',late,'r')+sec('오늘',tod,'o')+sec('이번 주',wk,'')+sec('나중 · 기한 없음',later,''):'<div class="empty">등록된 할 일이 없습니다. 위 입력창에 적고 Enter를 누르세요.</div>')+'</div>'+
     '<div style="flex:1;min-width:320px;display:flex;flex-direction:column;gap:18px">'+
-    '<div class="hm-c"><h3>메일</h3><div class="hm-s">Outlook에서 자동으로 모읍니다</div>'+
-    '<button class="hm-tc" data-act="view" data-id="me"><b style="color:#2F6FDE">'+me.length+'</b><span><i>내가 회신할 메일</i>'+(me.length?'가장 오래된 건 '+oldest(me)+'일 전':'회신할 메일이 없습니다')+'</span></button>'+
-    '<button class="hm-tc" data-act="view" data-id="wait"><b style="color:#E8541A">'+wt.length+'</b><span><i>상대 회신 대기</i>'+(wt.length?'가장 오래된 건 D+'+oldest(wt):'기다리는 메일이 없습니다')+'</span></button></div>'+
-    '<div class="hm-c"><h3>프로젝트별 현황</h3><div class="hm-lg"><span><i style="background:#E8541A"></i>할 일</span><span><i style="background:#2F6FDE"></i>내가 회신</span><span><i style="background:#9AA3B2"></i>상대 대기</span></div>';
+    '<div class="hm-c"><h3>메일</h3><div class="hm-s">Outlook에서 자동으로 가져옵니다</div>'+
+    '<button class="hm-tc" data-act="view" data-id="me"><b style="color:#2F6FDE">'+me.length+'</b><span><i>회신할 메일</i>'+(me.length?'가장 오래된 메일은 '+oldest(me)+'일 전에 받았습니다':'회신할 메일이 없습니다')+'</span></button>'+
+    '<button class="hm-tc" data-act="view" data-id="wait"><b style="color:#E8541A">'+wt.length+'</b><span><i>회신 대기</i>'+(wt.length?'가장 오래 기다린 메일은 '+oldest(wt)+'일째입니다':'기다리는 메일이 없습니다')+'</span></button></div>'+
+    '<div class="hm-c"><h3>프로젝트별 현황</h3><div class="hm-lg"><span><i style="background:#E8541A"></i>할 일</span><span><i style="background:#2F6FDE"></i>회신할 메일</span><span><i style="background:#9AA3B2"></i>회신 대기</span></div>';
   var pj={};o.forEach(function(x){var n=x.proj||'미분류';var r=pj[n]||(pj[n]={me:0,wait:0,todo:0});r[x.kind]++;});
   var names=Object.keys(pj).sort(function(a,b){var s=function(n){return pj[n].me+pj[n].wait+pj[n].todo;};return s(b)-s(a);}).slice(0,6);
   h+=names.length?names.map(function(n){var r=pj[n],s=r.me+r.wait+r.todo;return '<div class="hm-pb"><div><span>'+esc(n)+'</span><em>할 일 '+r.todo+' · 메일 '+(r.me+r.wait)+'</em></div><div class="hm-bar"><i style="width:'+(r.todo*100/s)+'%;background:#E8541A"></i><i style="width:'+(r.me*100/s)+'%;background:#2F6FDE"></i><i style="width:'+(r.wait*100/s)+'%;background:#9AA3B2"></i></div></div>';}).join(''):'<div class="empty">항목이 없습니다.</div>';
