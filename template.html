@@ -169,7 +169,7 @@ body{background:#FBF5EC}
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611121400';
+const TVER='202611121410';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -398,7 +398,7 @@ function urg(x){return x.kind==='todo'?(x.due?x.dd:9999):(5-x.days);}
 function hmTop(cnt){
   var d=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
   var tabs=['home','all','todo','me','wait','done','trash'];
-  return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-pj" data-act="pm">프로젝트</button><button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
+  return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+' · v'+TVER.slice(-8)+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-pj" data-act="pm">프로젝트</button><button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
 }
 var ILLU='<svg class="hm-il" viewBox="0 0 360 190" role="img" aria-label="체크리스트 일러스트"><rect x="150" y="14" width="170" height="160" rx="22" fill="#fff" transform="rotate(5 235 94)"/><rect x="120" y="22" width="180" height="160" rx="22" fill="#fff" stroke="#F3C7A8" stroke-width="3" transform="rotate(-4 210 102)"/><g transform="rotate(-4 210 102)"><circle cx="150" cy="60" r="13" fill="#FFD3B8"/><path d="M144 60l5 5 9-10" fill="none" stroke="#E2531B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="174" y="55" width="100" height="10" rx="5" fill="#F1EAE0"/><circle cx="150" cy="100" r="13" fill="#FFD3B8"/><path d="M144 100l5 5 9-10" fill="none" stroke="#E2531B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="174" y="95" width="76" height="10" rx="5" fill="#F1EAE0"/><circle cx="150" cy="140" r="13" fill="none" stroke="#D9CBBB" stroke-width="3"/><rect x="174" y="135" width="90" height="10" rx="5" fill="#F1EAE0"/></g><circle cx="322" cy="150" r="22" fill="#E2531B"/><path d="M312 150l7 7 13-15" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="76" cy="46" r="9" fill="#FFB98E"/><circle cx="340" cy="40" r="6" fill="#FFB98E"/><circle cx="96" cy="150" r="5" fill="#FFB98E"/></svg>';
 function sumHtml(all,hot,cp){
