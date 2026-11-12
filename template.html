@@ -148,13 +148,17 @@ body{background:#FBF5EC}
 .hm-d2.r{background:#FFE0DC;color:#A8271B}.hm-d2.o{background:#FFEBCF;color:#8F4A06}
 .hm-sec .r{color:#A8271B}.hm-sec .o{color:#8F4A06}
 .det,.hm-c,.it{border-color:#EADFD2}
+
+.t-me{background:#E8F1FD;color:#1D4E9E}.t-wt{background:#FFF1E6;color:#B54708}
+.gh.k-me{color:#1D4E9E}.gh.k-me b{background:#E8F1FD}.gh.k-wait{color:#B54708}.gh.k-wait b{background:#FFF1E6}.gh.k-todo{color:#C2410C}
+.it .tt{font-size:15px}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611121100';
+const TVER='202611121130';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -242,7 +246,7 @@ function dayDiff(iso){var t=new Date(iso).getTime();if(isNaN(t))return 0;return 
 function today(){return new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);}
 function md(iso){return String(iso||'').slice(5,10);}
 function tier(d){return 'w';}
-var TN={h:'오늘',w:'대기',t:'할 일',u:'지연'};
+var TN={h:'오늘',w:'회신 대기',t:'할 일',u:'지연'};
 function dueInfo(due){if(!due)return {k:'none',d:1e9,l:''};var d=Math.round((new Date(due)-new Date(today()))/864e5);return {k:d<0?'late':d===0?'today':'soon',d:d,l:d<0?'D+'+(-d):d===0?'오늘':'D-'+d};}
 function pt(x){if(x.kind==='me')return '회신할 메일';return x.kind==='todo'?({u:'지연',h:'오늘',w:'예정',t:'할 일'})[x.tier]:TN[x.tier];}
 var IC={
@@ -336,14 +340,15 @@ function stepsHtml(x){
   lab.forEach(function(l,i){var on=i<n;h+='<div class="st'+(on?' on':'')+(on&&i===n-1?' cur':'')+'"><i></i>'+l+'</div>';});
   return h+'</div>';
 }
+function kc(x){return x.kind==='me'?'me':x.kind==='wait'?'wt':x.tier;}
 function listItem(x){
-  var t=x.tier, circ=(x.kind==='todo'&&x.due)?'<div class="dc t-'+t+'"><div class="n" style="font-size:'+(x.dl.length>3?'15px':'20px')+'">'+esc(x.dl)+'</div><div class="u">'+(x.dd<0?'지연':'마감')+'</div></div>':(x.kind==='wait'||x.kind==='me')?'<div class="dc t-'+t+'"><div class="n">'+x.days+'</div><div class="u">일</div></div>':'<div class="dc t-t">'+ico('check','#2B4C8C',22)+'</div>';
+  var t=x.tier, circ=(x.kind==='todo'&&x.due)?'<div class="dc t-'+t+'"><div class="n" style="font-size:'+(x.dl.length>3?'15px':'20px')+'">'+esc(x.dl)+'</div><div class="u">'+(x.dd<0?'지연':'마감')+'</div></div>':(x.kind==='wait'||x.kind==='me')?'<div class="dc t-'+kc(x)+'"><div class="n">'+x.days+'</div><div class="u">일</div></div>':'<div class="dc t-t">'+ico('check','#2B4C8C',22)+'</div>';
   return '<button class="it'+(x.done?' dim':'')+'" data-act="sel" data-id="'+esc(x.id)+'" aria-current="'+(x.id===sel?'true':'false')+'">'+circ+
-    '<div class="im"><div class="tt">'+esc(x.title)+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+t+'">'+pt(x)+'</span></button>';
+    '<div class="im"><div class="tt">'+esc(x.title)+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+kc(x)+'">'+pt(x)+'</span></button>';
 }
 function detail(x){
   if(!x)return '<div class="det"><div class="bar"></div><div class="dp"><div class="empty">왼쪽에서 항목을 선택하세요.</div></div></div>';
-  var id=esc(x.id), h='<div class="det"><div class="bar"></div><div class="dp"><div class="dh"><div><h2>'+esc(x.title)+'</h2>'+trSub(x)+'<div class="w">'+esc(x.who)+(x.src==='manual'?(x.who?' · ':'')+'직접 추가':'')+'</div></div><span class="pill t-'+x.tier+'">'+pt(x)+'</span></div>';
+  var id=esc(x.id), h='<div class="det"><div class="bar"></div><div class="dp"><div class="dh"><div><h2>'+esc(x.title)+'</h2>'+trSub(x)+'<div class="w">'+esc(x.who)+(x.src==='manual'?(x.who?' · ':'')+'직접 추가':'')+'</div></div><span class="pill t-'+kc(x)+'">'+pt(x)+'</span></div>';
   h+=trNotice(x);
   if(x.kind==='wait'||x.kind==='me'){
     if(x.src==='mail'&&x.kind==='wait')h+=stepsHtml(x);
@@ -446,7 +451,13 @@ function render(){
       '<div class="fr"><button class="b1" type="submit">추가</button><button class="b2" type="button" data-act="cancel">취소</button></div></form>';
   }
   if(!list.length)h+='<div class="empty">표시할 항목이 없습니다.</div>';
-  else if(pfilter===''){
+  else if(view==='all'){
+    [['todo','내 할 일'],['me','회신할 메일'],['wait','회신 대기']].forEach(function(g){
+      var arr=list.filter(function(x){return x.kind===g[0];});if(!arr.length)return;
+      var ck=!!col['k:'+g[0]];
+      h+='<button class="gh k-'+g[0]+'" data-act="gt" data-id="k:'+g[0]+'" aria-expanded="'+(ck?'false':'true')+'"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate('+(ck?-90:0)+'deg);transition:transform .15s"><path d="M6 9l6 6 6-6"/></svg>'+g[1]+'<b>'+arr.length+'</b></button>'+(ck?'':arr.map(listItem).join(''));
+    });
+  }else if(pfilter===''){
     var gm={},go=[];PROJRULES.forEach(function(r){if(r.name&&!(r.name in gm)){gm[r.name]=[];go.push(r.name);}});
     list.forEach(function(x){var n=x.proj||'';if(!(n in gm)){gm[n]=[];go.push(n);}gm[n].push(x);});
     go=go.filter(function(n){return n!==''&&gm[n].length;}).concat(gm['']&&gm[''].length?['']:[]);
