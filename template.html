@@ -167,13 +167,18 @@ body{background:#FBF5EC}
 .hm-pills button{position:relative;border-radius:14px;padding:10px 18px;font-weight:600}
 .hm-pills button em{position:absolute;top:-8px;right:-7px;min-width:22px;height:22px;border-radius:11px;background:#FF3B30;color:#fff;font-style:normal;font-size:12px;font-weight:600;display:flex;align-items:center;justify-content:center;padding:0 6px;box-shadow:0 0 0 2px #FFE0CB}
 .hm-pills button em.z{background:#C7C7CC}
+.hm-row.hi{background:#FFF1EA;border-left:5px solid #E2531B;border-radius:12px;padding-left:14px;padding-right:12px;margin:3px 0}
+.hm-row.hi .hm-ck{border-color:#E2531B}.hm-row.hi .hm-rt{font-weight:700}
+.hm-row.hi .hm-pj{background:#fff}
+.it.hi{background:#FFF1EA;border-color:#F6C9B3;border-left:5px solid #E2531B}
+.hm-pills button.imp{background:#FFF1EA;color:#C2410C;box-shadow:inset 0 0 0 1.5px #F2B79C}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611121500';
+const TVER='202611121510';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -358,7 +363,7 @@ function stepsHtml(x){
 function kc(x){return x.kind==='me'?'me':x.kind==='wait'?'wt':x.tier;}
 function listItem(x){
   var t=x.tier, circ=(x.kind==='todo'&&x.due)?'<div class="dc t-'+t+'"><div class="n" style="font-size:'+(x.dl.length>3?'15px':'20px')+'">'+esc(x.dl)+'</div><div class="u">'+(x.dd<0?'지연':'마감')+'</div></div>':(x.kind==='wait'||x.kind==='me')?'<div class="dc t-'+kc(x)+'"><div class="n">'+x.days+'</div><div class="u">일</div></div>':'<div class="dc t-t">'+ico('check','#2B4C8C',22)+'</div>';
-  return '<button class="it'+(x.done?' dim':'')+'" data-act="sel" data-id="'+esc(x.id)+'" aria-current="'+(x.id===sel?'true':'false')+'">'+circ+
+  return '<button class="it'+(x.done?' dim':'')+(x.prio==='h'&&!x.done?' hi':'')+'" data-act="sel" data-id="'+esc(x.id)+'" aria-current="'+(x.id===sel?'true':'false')+'">'+circ+
     '<div class="im"><div class="tt">'+esc(x.title)+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+kc(x)+'">'+pt(x)+'</span></button>';
 }
 function detail(x){
@@ -411,7 +416,7 @@ function sumHtml(all,hot,cp){
   var late=td.filter(function(x){return x.due&&x.dd<0;}), tod=td.filter(function(x){return x.due&&x.dd===0;}), wk=td.filter(function(x){return x.due&&x.dd>0&&x.dd<=6;});
   var n=late.length+tod.length;
   var ttl=n?'오늘 처리할 일이 <b>'+n+'건</b> 있어요':'오늘 급하게 처리할 일은 <b>없어요</b>';
-  return '<div class="hm-hero2'+(cp?' cp':'')+'"><div><h2>'+ttl+'</h2><p>지연 '+late.length+'건 · 오늘 마감 '+tod.length+'건 · 이번 주 마감 '+wk.length+'건</p><div class="hm-pills"><button data-act="view" data-id="all">중요<em'+(hot?'':' class="z"')+'>'+hot+'</em></button><button data-act="view" data-id="todo">진행 중<em'+(td.length?'':' class="z"')+'>'+td.length+'</em></button><button data-act="view" data-id="me">회신할 메일<em'+(me.length?'':' class="z"')+'>'+me.length+'</em></button><button data-act="view" data-id="wait">회신 대기<em'+(wt.length?'':' class="z"')+'>'+wt.length+'</em></button></div></div>'+ILLU+'</div>';
+  return '<div class="hm-hero2'+(cp?' cp':'')+'"><div><h2>'+ttl+'</h2><p>지연 '+late.length+'건 · 오늘 마감 '+tod.length+'건 · 이번 주 마감 '+wk.length+'건</p><div class="hm-pills"><button class="imp" data-act="view" data-id="all">중요<em'+(hot?'':' class="z"')+'>'+hot+'</em></button><button data-act="view" data-id="todo">진행 중<em'+(td.length?'':' class="z"')+'>'+td.length+'</em></button><button data-act="view" data-id="me">회신할 메일<em'+(me.length?'':' class="z"')+'>'+me.length+'</em></button><button data-act="view" data-id="wait">회신 대기<em'+(wt.length?'':' class="z"')+'>'+wt.length+'</em></button></div></div>'+ILLU+'</div>';
 }
 function addProj(n){n=String(n||'').trim();if(!n||n==='미분류'||n==='__none')return false;if(userProj.indexOf(n)>=0)return false;userProj.push(n);save('mt_pl',userProj);return true;}
 function pmHtml(){if(!pmOpen)return '';var cn={};items().forEach(function(x){if(x.trash||!x.proj)return;cn[x.proj]=(cn[x.proj]||0)+1;});
@@ -436,7 +441,7 @@ function homeHtml(all,cnt,hot,dueNow){
   var rk={h:0,n:1,l:2};
   function sec(title,arr,cls){if(!arr.length)return '';arr=arr.slice().sort(function(a,b){return (a.due&&b.due?a.dd-b.dd:0)||(rk[a.prio]-rk[b.prio]);});
     return '<div class="hm-sec"><span class="'+cls+'">'+title+'</span><em>'+arr.length+'건</em></div>'+arr.slice(0,6).map(function(x){var c=x.due?(x.dd<0?{t:'지연 '+(-x.dd)+'일',c:'r'}:x.dd===0?{t:'오늘',c:'o'}:{t:md(x.due),c:''}):{t:'기한 없음',c:''};
-      return '<div class="hm-row"><button class="hm-ck" data-act="toggle" data-id="'+esc(x.id)+'" aria-label="완료로 표시: '+esc(x.title)+'"></button><button class="hm-go" data-act="go" data-id="'+esc(x.id)+'"><span class="hm-rt">'+esc(x.title)+'</span>'+(x.proj?'<span class="hm-pj">'+esc(x.proj)+'</span>':'')+(x.prio==='h'?'<span class="hm-st">중요</span>':'')+'<span class="hm-d2 '+c.c+'">'+esc(c.t)+'</span></button></div>';}).join('')+(arr.length>6?'<button class="hm-more" data-act="view" data-id="todo">+ '+(arr.length-6)+'건 더 보기</button>':'');}
+      return '<div class="hm-row'+(x.prio==='h'?' hi':'')+'"><button class="hm-ck" data-act="toggle" data-id="'+esc(x.id)+'" aria-label="완료로 표시: '+esc(x.title)+'"></button><button class="hm-go" data-act="go" data-id="'+esc(x.id)+'"><span class="hm-rt">'+esc(x.title)+'</span>'+(x.proj?'<span class="hm-pj">'+esc(x.proj)+'</span>':'')+(x.prio==='h'?'<span class="hm-st">중요</span>':'')+'<span class="hm-d2 '+c.c+'">'+esc(c.t)+'</span></button></div>';}).join('')+(arr.length>6?'<button class="hm-more" data-act="view" data-id="todo">+ '+(arr.length-6)+'건 더 보기</button>':'');}
   h+='<div class="hm-r2"><div class="hm-c" style="flex:1.7"><h3>내 할 일</h3><div class="hm-s">기한이 급한 순서입니다. 왼쪽 동그라미를 누르면 완료로 넘어갑니다.</div>'+
     (td.length?sec('지연',late,'r')+sec('오늘',tod,'o')+sec('이번 주',wk,'')+sec('나중 · 기한 없음',later,''):'<div class="empty">등록된 할 일이 없습니다. 위 입력창에 적고 Enter를 누르세요.</div>')+'</div>'+
     '<div style="flex:1;min-width:320px;display:flex;flex-direction:column;gap:20px">'+
