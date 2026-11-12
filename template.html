@@ -156,20 +156,27 @@ body{background:#FBF5EC}
 .mdc{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);width:min(560px,100%);max-height:92vh;overflow:auto;padding:22px}
 .mdh{font-size:20px;font-weight:800;margin-bottom:12px;color:#C2410C}
 .mdc form{display:flex;flex-direction:column;gap:12px}
-.mdc #f{border:0;box-shadow:none;padding:0;background:none}</style>
+.mdc #f{border:0;box-shadow:none;padding:0;background:none}.hm-pj{border:1.5px solid #F0D5C4;background:#fff;color:#C2410C;border-radius:12px;padding:0 14px;min-height:44px;font-weight:700;cursor:pointer;font-size:14px}
+.pmf{display:flex;gap:8px;margin-bottom:12px}.pmf input{flex:1;min-width:0}
+.pml{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-direction:column;gap:6px;max-height:44vh;overflow:auto}
+.pml li{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid #F1EAE0;border-radius:12px;background:#FFFAF6}
+.pml .pn{font-weight:700;flex:1;min-width:0;overflow-wrap:anywhere}.pml em{font-style:normal;font-size:12px;color:#7a6f66}.pml .pe{color:#7a6f66;justify-content:center}
+.b2.sm{min-height:32px;padding:0 10px;font-size:12px}.pmn{font-size:12px;color:#7a6f66;margin-bottom:12px;line-height:1.5}
+.mdc .pmf{flex-direction:row;border:0;box-shadow:none;padding:0;background:none}
+</style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611120940';
+const TVER='202611121010';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-var done=load('mt_done',{}), hidden=load('mt_hidden',{}), manual=load('mt_manual',[]), view=load('mt_view2','home'), sel=null, formOpen=false, prio=load('mt_prio',{}), projOv=load('mt_proj',{}), pfilter=load('mt_pf',''), projList=[], trCache=load('mt_tr',{}), translator=null, trState='check', trPct=0, pending={}, col=load('mt_col',{});
+var done=load('mt_done',{}), hidden=load('mt_hidden',{}), manual=load('mt_manual',[]), view=load('mt_view2','home'), sel=null, formOpen=false, pmOpen=false, userProj=load('mt_pl',[]), prio=load('mt_prio',{}), projOv=load('mt_proj',{}), pfilter=load('mt_pf',''), projList=[], trCache=load('mt_tr',{}), translator=null, trState='check', trPct=0, pending={}, col=load('mt_col',{});
 var PROJRULES=(DATA&&DATA.projects)||[], mi=null;
 function projMatch(t){t=String(t||'').toLowerCase();for(var i=0;i<PROJRULES.length;i++){var p=PROJRULES[i],ks=[].concat(p.keywords||[]);for(var j=0;j<ks.length;j++){var k=String(ks[j]).trim().toLowerCase();if(k&&t.indexOf(k)>=0)return p.name;}}return '';}
 function dec(u,cs){try{return new TextDecoder(cs||'utf-8').decode(u);}catch(e){return new TextDecoder('utf-8').decode(u);}}
@@ -391,7 +398,7 @@ function urg(x){return x.kind==='todo'?(x.due?x.dd:9999):(5-x.days);}
 function hmTop(cnt){
   var d=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
   var tabs=['home','all','todo','me','wait','done','trash'];
-  return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
+  return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-pj" data-act="pm">프로젝트</button><button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
 }
 var ILLU='<svg class="hm-il" viewBox="0 0 360 190" role="img" aria-label="체크리스트 일러스트"><rect x="150" y="14" width="170" height="160" rx="22" fill="#fff" transform="rotate(5 235 94)"/><rect x="120" y="22" width="180" height="160" rx="22" fill="#fff" stroke="#F3C7A8" stroke-width="3" transform="rotate(-4 210 102)"/><g transform="rotate(-4 210 102)"><circle cx="150" cy="60" r="13" fill="#FFD3B8"/><path d="M144 60l5 5 9-10" fill="none" stroke="#E2531B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="174" y="55" width="100" height="10" rx="5" fill="#F1EAE0"/><circle cx="150" cy="100" r="13" fill="#FFD3B8"/><path d="M144 100l5 5 9-10" fill="none" stroke="#E2531B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="174" y="95" width="76" height="10" rx="5" fill="#F1EAE0"/><circle cx="150" cy="140" r="13" fill="none" stroke="#D9CBBB" stroke-width="3"/><rect x="174" y="135" width="90" height="10" rx="5" fill="#F1EAE0"/></g><circle cx="322" cy="150" r="22" fill="#E2531B"/><path d="M312 150l7 7 13-15" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="76" cy="46" r="9" fill="#FFB98E"/><circle cx="340" cy="40" r="6" fill="#FFB98E"/><circle cx="96" cy="150" r="5" fill="#FFB98E"/></svg>';
 function sumHtml(all,hot,cp){
@@ -402,6 +409,11 @@ function sumHtml(all,hot,cp){
   var ttl=n?'오늘 처리할 일이 <b>'+n+'건</b> 있어요':'오늘 급하게 처리할 일은 <b>없어요</b>';
   return '<div class="hm-hero2'+(cp?' cp':'')+'"><div><h2>'+ttl+'</h2><p>지연 '+late.length+'건 · 오늘 마감 '+tod.length+'건 · 이번 주 마감 '+wk.length+'건</p><div class="hm-pills"><button data-act="view" data-id="all">중요 '+hot+'</button><button data-act="view" data-id="todo">진행 중 '+td.length+'</button><button data-act="view" data-id="me">회신할 메일 '+me.length+'</button><button data-act="view" data-id="wait">회신 대기 '+wt.length+'</button></div></div>'+ILLU+'</div>';
 }
+function addProj(n){n=String(n||'').trim();if(!n||n==='미분류'||n==='__none')return false;if(userProj.indexOf(n)>=0)return false;userProj.push(n);save('mt_pl',userProj);return true;}
+function pmHtml(){if(!pmOpen)return '';var cn={};items().forEach(function(x){if(x.trash||!x.proj)return;cn[x.proj]=(cn[x.proj]||0)+1;});
+  var auto={};PROJRULES.forEach(function(r){if(r.name)auto[r.name]=1;});
+  var rows=projList.map(function(n){var isU=userProj.indexOf(n)>=0,isA=!!auto[n];return '<li><span class="pn">'+esc(n)+'</span><em>'+(cn[n]||0)+'건'+(isA?' · 메일 자동 분류':'')+'</em>'+(isU&&!isA?'<button class="b2 sm" type="button" data-act="pmdel" data-id="'+esc(n)+'" aria-label="'+esc(n)+' 삭제">삭제</button>':'')+'</li>';}).join('');
+  return '<div class="mdl" id="pml"><div class="mdc" role="dialog" aria-modal="true" aria-label="프로젝트 관리"><div class="mdh">프로젝트 관리</div><form id="pmf" class="pmf"><input id="pm-n" maxlength="40" placeholder="새 프로젝트 이름" autocomplete="off" required><button class="b1" type="submit">추가</button></form><ul class="pml">'+(rows||'<li class="pe">아직 프로젝트가 없습니다.</li>')+'</ul><div class="pmn">삭제해도 이미 그 프로젝트로 분류된 항목은 그대로 남습니다. 메일을 자동으로 분류하려면 projects.csv에 키워드를 추가하세요.</div><div class="fr"><button class="b2" type="button" data-act="pmx">닫기</button></div></div></div>';}
 function formHtml(){if(!formOpen)return '';var h=
     '<div class="mdl" id="mdl"><div class="mdc" role="dialog" aria-modal="true" aria-label="할 일 직접 추가"><div class="mdh">직접 추가</div><form id="f"><div class="dz" id="dz" tabindex="0" role="button" aria-label="메일 파일 올리기"><b>Outlook 메일 파일 올리기 (.msg / .eml)</b><span>여기로 끌어다 놓거나 눌러서 고르세요. 제목·날짜·요지·프로젝트를 자동으로 채웁니다. 여러 개를 한 번에 올리면 바로 추가됩니다.</span><input type="file" id="mf" accept=".msg,.eml" multiple hidden></div><div class="dzs" id="dzs" aria-live="polite"></div><label>구분<select id="f-type"><option value="todo">할 일 (업무, 받은 메일 등)</option><option value="wait">회신 대기 (내가 보낸 메일)</option></select></label>'+
       '<label>내용<input id="f-title" required maxlength="120"></label><label>프로젝트 (선택)<input id="f-proj" list="pjl2" maxlength="40"></label><datalist id="pjl2">'+projList.map(function(n){return '<option value="'+esc(n)+'">';}).join('')+'</datalist><label>기한 (선택)<input id="f-due" type="date"></label><label>메모 (선택)<textarea id="f-note" rows="3" maxlength="1000"></textarea></label>'+'<label>중요도<select id="f-prio"><option value="n">보통</option><option value="h">높음</option><option value="l">낮음</option></select></label>'+
@@ -441,9 +453,9 @@ function render(){
   var dueNow=open(function(x){return x.kind==='todo'&&x.due&&x.dd<=0;}).length;
   var hot=open(function(x){return x.prio==='h';}).length;
   var cnt={home:0,me:meN,all:waits.length+meN+todosN,wait:waits.length,todo:todosN,done:all.filter(function(x){return !x.trash&&x.done;}).length,trash:all.filter(function(x){return x.trash;}).length};
-  if(view==='home'){app.innerHTML=homeHtml(all,cnt,hot,dueNow)+formHtml();if(!formOpen)mi=null;wireForm();return;}
+  var pset={};PROJRULES.forEach(function(r){if(r.name)pset[r.name]=1;});userProj.forEach(function(n){pset[n]=1;});all.forEach(function(x){if(x.proj)pset[x.proj]=1;});projList=Object.keys(pset).sort();
+  if(view==='home'){app.innerHTML=homeHtml(all,cnt,hot,dueNow)+formHtml()+pmHtml();if(!formOpen)mi=null;wireForm();return;}
   var list=all.filter(inView);
-  var pset={};PROJRULES.forEach(function(r){if(r.name)pset[r.name]=1;});all.forEach(function(x){if(x.proj)pset[x.proj]=1;});projList=Object.keys(pset).sort();
   if(pfilter==='__none')list=list.filter(function(x){return !x.proj;});else if(pfilter)list=list.filter(function(x){return x.proj===pfilter;});
   var rk={h:0,n:1,l:2};list.sort(function(a,b){if(view==='all'){var ua=urg(a),ub=urg(b);return (rk[a.prio]-rk[b.prio])||(ua-ub);}if(a.kind==='todo'&&b.kind==='todo'&&a.dd!==b.dd)return a.dd-b.dd;return (rk[a.prio]-rk[b.prio])||(b.days-a.days);});
   if(!list.some(function(x){return x.id===sel;}))sel=list.length?list[0].id:null;
@@ -461,13 +473,13 @@ function render(){
       h+='<button class="gh k-'+g[0]+'" data-act="gt" data-id="k:'+g[0]+'" aria-expanded="'+(ck?'false':'true')+'"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate('+(ck?-90:0)+'deg);transition:transform .15s"><path d="M6 9l6 6 6-6"/></svg>'+g[1]+'<b>'+arr.length+'</b></button>'+(ck?'':arr.map(listItem).join(''));
     });
   }else if(pfilter===''){
-    var gm={},go=[];PROJRULES.forEach(function(r){if(r.name&&!(r.name in gm)){gm[r.name]=[];go.push(r.name);}});
+    var gm={},go=[];PROJRULES.forEach(function(r){if(r.name&&!(r.name in gm)){gm[r.name]=[];go.push(r.name);}});userProj.forEach(function(n){if(!(n in gm)){gm[n]=[];go.push(n);}});
     list.forEach(function(x){var n=x.proj||'';if(!(n in gm)){gm[n]=[];go.push(n);}gm[n].push(x);});
     go=go.filter(function(n){return n!==''&&gm[n].length;}).concat(gm['']&&gm[''].length?['']:[]);
     go.forEach(function(n){var c=!!col[n||'__none'];h+='<button class="gh" data-act="gt" data-id="'+esc(n||'__none')+'" aria-expanded="'+(c?'false':'true')+'"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate('+(c?-90:0)+'deg);transition:transform .15s"><path d="M6 9l6 6 6-6"/></svg>'+esc(n||'미분류')+'<b>'+gm[n].length+'</b></button>'+(c?'':gm[n].map(listItem).join(''));});
   }else h+=list.map(listItem).join('');
   h+='</div>'+detail(cur)+'</div></div>';
-  app.innerHTML=h+formHtml(); if(!formOpen)mi=null;
+  app.innerHTML=h+formHtml()+pmHtml(); if(!formOpen)mi=null;
   if(cur&&(cur.src==='mail'||cur.file))ensureTr(cur);
   wireForm();
 }
@@ -477,6 +489,7 @@ function wireForm(){
     e.preventDefault();
     var title=document.getElementById('f-title').value.trim(); if(!title)return;
     var id='x:'+Date.now();
+    addProj(document.getElementById('f-proj').value);
     manual.push({id:id,type:document.getElementById('f-type').value,title:title,project:document.getElementById('f-proj').value.trim(),base:document.getElementById('f-date').value||today(),due:document.getElementById('f-due').value||'',note:document.getElementById('f-note').value.trim(),done:false});
     if(mi){var lm=manual[manual.length-1];lm.file=true;lm.from=mi.from;lm.summary=mi.summary;lm.preview=mi.preview;mi=null;}
     var pv=document.getElementById('f-prio').value; if(pv!=='n'){prio[id]=pv;save('mt_prio',prio);}
@@ -521,6 +534,9 @@ app.addEventListener('click',function(e){
   if(act==='open'){formOpen=true;render();setTimeout(function(){var x=document.getElementById('f-title');if(x)x.focus();},30);}
   else if(act==='go'){var gx=cur(id);if(gx){view=gx.kind;save('mt_view2',view);sel=id;pfilter='';render();}}
   else if(act==='cancel'){formOpen=false;render();}
+  else if(act==='pm'){pmOpen=true;render();setTimeout(function(){var x=document.getElementById('pm-n');if(x)x.focus();},30);}
+  else if(act==='pmx'){pmOpen=false;render();}
+  else if(act==='pmdel'){userProj=userProj.filter(function(n){return n!==id;});save('mt_pl',userProj);if(pfilter===id){pfilter='';save('mt_pf','');}render();}
   else if(act==='mdx'){if(e.target.id==='mdl'){formOpen=false;render();}}
   else if(act==='view'){view=id;save('mt_view2',view);sel=null;render();}
   else if(act==='sel'){sel=id;render();}
@@ -536,18 +552,19 @@ app.addEventListener('change',function(e){
   var el=e.target;
   if(el.id==='pf'){pfilter=el.value;save('mt_pf',pfilter);sel=null;render();}
   else if(el.id==='tt'||el.id==='dd'||el.id==='nt'){var mid=el.getAttribute('data-id');manual.forEach(function(m){if(m.id===mid){if(el.id==='tt'){var v0=el.value.trim();if(v0)m.title=v0;}else if(el.id==='dd')m.due=el.value||'';else m.note=el.value.trim();}});save('mt_manual',manual);render();}
-  else if(el.id==='pj'){var id=el.getAttribute('data-id'),v=el.value.trim();if(v)projOv[id]=v;else delete projOv[id];save('mt_proj',projOv);render();}
+  else if(el.id==='pj'){var id=el.getAttribute('data-id'),v=el.value.trim();if(v){projOv[id]=v;addProj(v);}else delete projOv[id];save('mt_proj',projOv);render();}
 });
-document.addEventListener('keydown',function(e){if(e.key==='Escape'&&formOpen){formOpen=false;render();}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pmOpen){pmOpen=false;render();}});
 render();
 app.addEventListener('submit',function(e){
+  if(e.target.id==='pmf'){e.preventDefault();var pn=document.getElementById('pm-n'),nv=pn.value.trim();if(nv){addProj(nv);}render();var q=document.getElementById('pm-n');if(q)q.focus();return;}
   if(e.target.id!=='qa')return;e.preventDefault();
   var ti=document.getElementById('qa-t'),v=ti.value.trim();if(!v)return;
   var id='x:'+Date.now(),pj=(pfilter&&pfilter!=='__none')?pfilter:'';
   manual.push({id:id,type:'todo',title:v,project:pj,base:today(),due:document.getElementById('qa-d').value||'',note:'',done:false});
   save('mt_manual',manual);render();var n=document.getElementById('qa-t');if(n)n.focus();
 });
-setInterval(function(){var a=document.activeElement;if(!formOpen&&!(a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.value))))(window.top||window).location.reload();},300000);
+setInterval(function(){var a=document.activeElement;if(!formOpen&&!pmOpen&&!(a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.value))))(window.top||window).location.reload();},300000);
 </script>
 </body>
 </html>
