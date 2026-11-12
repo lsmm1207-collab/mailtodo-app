@@ -172,13 +172,18 @@ body{background:#FBF5EC}
 .hm-row.hi .hm-pj{background:#fff}
 .it.hi{background:#FFF1EA;border-color:#F6C9B3;border-left:5px solid #E2531B}
 .hm-pills button.imp{background:#FFF1EA;color:#C2410C;box-shadow:inset 0 0 0 1.5px #F2B79C}
+@keyframes mtBreath{0%,100%{box-shadow:0 0 0 0 rgba(226,83,27,0),inset 0 0 0 1.5px rgba(226,83,27,.22);border-left-color:#E2531B}50%{box-shadow:0 0 14px 2px rgba(226,83,27,.38),inset 0 0 0 1.5px rgba(226,83,27,.85);border-left-color:#FF7A3D}}
+@keyframes mtBreathC{0%,100%{box-shadow:0 0 0 0 rgba(226,83,27,0),inset 0 0 0 1.5px #F2B79C}50%{box-shadow:0 0 12px 1px rgba(226,83,27,.35),inset 0 0 0 1.5px #E2531B}}
+.hm-row.hi,.it.hi{animation:mtBreath 2.8s ease-in-out infinite}
+.hm-pills button.imp{animation:mtBreathC 2.8s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.hm-row.hi,.it.hi,.hm-pills button.imp{animation:none}}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611121510';
+const TVER='202611121520';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
