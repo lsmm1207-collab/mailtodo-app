@@ -180,13 +180,14 @@ body{background:#FBF5EC}
 .hm-nav em{display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 6px;border-radius:10px;background:#FF3B30;color:#fff;font-size:11px;font-weight:600;opacity:1;margin-left:6px;vertical-align:1px;line-height:1}
 .hm-nav em.g{background:#E5E5EA;color:#6e6e73}
 .hm-nav button[aria-current=true] em{background:#fff;color:#E2531B}
+.pmb{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611121530';
+const TVER='202611121600';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -430,7 +431,7 @@ function addProj(n){n=String(n||'').trim();if(!n||n==='미분류'||n==='__none')
 function pmHtml(){if(!pmOpen)return '';var cn={};items().forEach(function(x){if(x.trash||!x.proj)return;cn[x.proj]=(cn[x.proj]||0)+1;});
   var auto={};PROJRULES.forEach(function(r){if(r.name)auto[r.name]=1;});
   var rows=projList.map(function(n){var isU=userProj.indexOf(n)>=0,isA=!!auto[n];return '<li><span class="pn">'+esc(n)+'</span><em>'+(cn[n]||0)+'건'+(isA?' · 메일 자동 분류':'')+'</em>'+(isU&&!isA?'<button class="b2 sm" type="button" data-act="pmdel" data-id="'+esc(n)+'" aria-label="'+esc(n)+' 삭제">삭제</button>':'')+'</li>';}).join('');
-  return '<div class="mdl" id="pml"><div class="mdc" role="dialog" aria-modal="true" aria-label="프로젝트 관리"><div class="mdh">프로젝트 관리</div><form id="pmf" class="pmf"><input id="pm-n" maxlength="40" placeholder="새 프로젝트 이름" autocomplete="off" required><button class="b1" type="submit">추가</button></form><ul class="pml">'+(rows||'<li class="pe">아직 프로젝트가 없습니다.</li>')+'</ul><div class="pmn">삭제해도 이미 그 프로젝트로 분류된 항목은 그대로 남습니다. 메일을 자동으로 분류하려면 projects.csv에 키워드를 추가하세요.</div><div class="fr"><button class="b2" type="button" data-act="pmx">닫기</button></div></div></div>';}
+  return '<div class="mdl" id="pml"><div class="mdc" role="dialog" aria-modal="true" aria-label="프로젝트 관리"><div class="mdh">프로젝트 관리</div><form id="pmf" class="pmf"><input id="pm-n" maxlength="40" placeholder="새 프로젝트 이름" autocomplete="off" required><button class="b1" type="submit">추가</button></form><ul class="pml">'+(rows||'<li class="pe">아직 프로젝트가 없습니다.</li>')+'</ul><div class="pmn">삭제해도 이미 그 프로젝트로 분류된 항목은 그대로 남습니다. 메일을 자동으로 분류하려면 projects.csv에 키워드를 추가하세요.</div><div class="pmb"><button class="b2 sm" type="button" data-act="bkx">할 일 백업 저장</button><button class="b2 sm" type="button" data-act="bki">백업 불러오기</button><input type="file" id="bk-f" accept=".json" hidden></div><div class="fr"><button class="b2" type="button" data-act="pmx">닫기</button></div></div></div>';}
 function formHtml(){if(!formOpen)return '';var h=
     '<div class="mdl" id="mdl"><div class="mdc" role="dialog" aria-modal="true" aria-label="할 일 직접 추가"><div class="mdh">직접 추가</div><form id="f"><div class="dz" id="dz" tabindex="0" role="button" aria-label="메일 파일 올리기"><b>Outlook 메일 파일 올리기 (.msg / .eml)</b><span>여기로 끌어다 놓거나 눌러서 고르세요. 제목·날짜·요지·프로젝트를 자동으로 채웁니다. 여러 개를 한 번에 올리면 바로 추가됩니다.</span><input type="file" id="mf" accept=".msg,.eml" multiple hidden></div><div class="dzs" id="dzs" aria-live="polite"></div><label>구분<select id="f-type"><option value="todo">할 일 (업무, 받은 메일 등)</option><option value="wait">회신 대기 (내가 보낸 메일)</option></select></label>'+
       '<label>내용<input id="f-title" required maxlength="120"></label><label>프로젝트 (선택)<input id="f-proj" list="pjl2" maxlength="40"></label><datalist id="pjl2">'+projList.map(function(n){return '<option value="'+esc(n)+'">';}).join('')+'</datalist><label>기한 (선택)<input id="f-due" type="date"></label><label>메모 (선택)<textarea id="f-note" rows="3" maxlength="1000"></textarea></label>'+'<label>중요도<select id="f-prio"><option value="n">보통</option><option value="h">높음</option><option value="l">낮음</option></select></label>'+
@@ -553,6 +554,8 @@ app.addEventListener('click',function(e){
   else if(act==='cancel'){formOpen=false;render();}
   else if(act==='pm'){pmOpen=true;render();setTimeout(function(){var x=document.getElementById('pm-n');if(x)x.focus();},30);}
   else if(act==='pmx'){pmOpen=false;render();}
+  else if(act==='bkx'){var o={v:1,at:new Date().toISOString()};['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf'].forEach(function(k){try{var s=localStorage.getItem(k);if(s)o[k]=JSON.parse(s);}catch(er){}});var bl=new Blob([JSON.stringify(o)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='todo-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},500);}
+  else if(act==='bki'){var bf=document.getElementById('bk-f');if(bf)bf.click();}
   else if(act==='pmdel'){userProj=userProj.filter(function(n){return n!==id;});save('mt_pl',userProj);if(pfilter===id){pfilter='';save('mt_pf','');}render();}
   else if(act==='mdx'){if(e.target.id==='mdl'){formOpen=false;render();}}
   else if(act==='view'){view=id;save('mt_view2',view);sel=null;render();}
@@ -572,6 +575,7 @@ app.addEventListener('change',function(e){
   else if(el.id==='pj'){var id=el.getAttribute('data-id'),v=el.value.trim();if(v){projOv[id]=v;addProj(v);}else delete projOv[id];save('mt_proj',projOv);render();}
 });
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pmOpen){pmOpen=false;render();}});
+app.addEventListener('change',function(e){if(!e.target||e.target.id!=='bk-f')return;var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1)throw 0;if(!confirm('현재 저장된 할 일 대신 백업 내용으로 바꿉니다. 계속할까요?'))return;['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf'].forEach(function(k){if(k in o)localStorage.setItem(k,JSON.stringify(o[k]));});(window.top||window).location.reload();}catch(er){alert('백업 파일을 읽지 못했습니다.');}};r.readAsText(f);});
 render();
 app.addEventListener('submit',function(e){
   if(e.target.id==='pmf'){e.preventDefault();var pn=document.getElementById('pm-n'),nv=pn.value.trim();if(nv){addProj(nv);}render();var q=document.getElementById('pm-n');if(q)q.focus();return;}
