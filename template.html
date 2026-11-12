@@ -210,20 +210,27 @@ button,[data-act],select{cursor:pointer}
 .hm-main .hm-hero2{flex:none}
 .hm-hero2.cp{padding:14px 26px;border-radius:20px}.hm-hero2.cp h2{font-size:20px}.hm-hero2.cp p{margin-top:2px}.hm-hero2.cp .hm-il{display:none}.hm-hero2.cp .hm-pills{margin-top:12px}
 @media (max-width:1100px){.hm-main.fit .body{grid-template-columns:minmax(300px,380px) minmax(0,1fr)}}
+
+.mdc.man{width:min(760px,100%)}.mnb{max-height:68vh;overflow:auto;padding-right:6px;font-size:14px;line-height:1.7;user-select:text;-webkit-user-select:text}
+.mnb h3{font-size:16px;margin:18px 0 6px;color:#C2410C}.mnb h3:first-child{margin-top:0}.mnb ul,.mnb ol{margin:6px 0;padding-left:22px}.mnb li{margin:3px 0}
+.mnb table{width:100%;border-collapse:collapse;margin:6px 0;font-size:13px}.mnb th,.mnb td{border:1px solid #F0E6DA;padding:7px 10px;text-align:left;vertical-align:top}.mnb th{background:#FFF3EA}
+.mnb .n{font-size:12px;color:#7a6f66;margin:4px 0}.mnb code{background:#F4EFE9;padding:1px 6px;border-radius:5px;font-size:12px}
+.hm-nav .hm-man{justify-content:center;margin-top:6px;color:#7A6E64}
+.hm-nav .hm-pjb{margin-bottom:0}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611121710';
+const TVER='202611121800';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
-var done=load('mt_done',{}), hidden=load('mt_hidden',{}), manual=load('mt_manual',[]), view=load('mt_view2','home'), sel=null, formOpen=false, pmOpen=false, userProj=load('mt_pl',[]), prio=load('mt_prio',{}), projOv=load('mt_proj',{}), pfilter=load('mt_pf',''), projList=[], trCache=load('mt_tr',{}), translator=null, trState='check', trPct=0, pending={}, col=load('mt_col',{});
+var done=load('mt_done',{}), hidden=load('mt_hidden',{}), manual=load('mt_manual',[]), view=load('mt_view2','home'), sel=null, formOpen=false, pmOpen=false, manOpen=false, userProj=load('mt_pl',[]), prio=load('mt_prio',{}), projOv=load('mt_proj',{}), pfilter=load('mt_pf',''), projList=[], trCache=load('mt_tr',{}), translator=null, trState='check', trPct=0, pending={}, col=load('mt_col',{});
 var PROJRULES=(DATA&&DATA.projects)||[], mi=null;
 function projMatch(t){t=String(t||'').toLowerCase();for(var i=0;i<PROJRULES.length;i++){var p=PROJRULES[i],ks=[].concat(p.keywords||[]);for(var j=0;j<ks.length;j++){var k=String(ks[j]).trim().toLowerCase();if(k&&t.indexOf(k)>=0)return p.name;}}return '';}
 function dec(u,cs){try{return new TextDecoder(cs||'utf-8').decode(u);}catch(e){return new TextDecoder('utf-8').decode(u);}}
@@ -445,7 +452,7 @@ function urg(x){return x.kind==='todo'?(x.due?x.dd:9999):(5-x.days);}
 function hmTop(cnt){
   var d=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
   var tabs=['home','all','todo','me','wait','done','trash'];
-  return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+' · v'+TVER.slice(-8)+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em'+(k==='done'||k==='trash'?' class="g"':'')+'>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-pjb" data-act="pm">프로젝트</button><button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
+  return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+' · v'+TVER.slice(-8)+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em'+(k==='done'||k==='trash'?' class="g"':'')+'>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-pjb" data-act="pm">프로젝트</button><button class="hm-man" data-act="man">사용법</button><button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
 }
 var ILLU='<svg class="hm-il" viewBox="0 0 360 190" role="img" aria-label="체크리스트 일러스트"><rect x="150" y="14" width="170" height="160" rx="22" fill="#fff" transform="rotate(5 235 94)"/><rect x="120" y="22" width="180" height="160" rx="22" fill="#fff" stroke="#F3C7A8" stroke-width="3" transform="rotate(-4 210 102)"/><g transform="rotate(-4 210 102)"><circle cx="150" cy="60" r="13" fill="#FFD3B8"/><path d="M144 60l5 5 9-10" fill="none" stroke="#E2531B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="174" y="55" width="100" height="10" rx="5" fill="#F1EAE0"/><circle cx="150" cy="100" r="13" fill="#FFD3B8"/><path d="M144 100l5 5 9-10" fill="none" stroke="#E2531B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="174" y="95" width="76" height="10" rx="5" fill="#F1EAE0"/><circle cx="150" cy="140" r="13" fill="none" stroke="#D9CBBB" stroke-width="3"/><rect x="174" y="135" width="90" height="10" rx="5" fill="#F1EAE0"/></g><circle cx="322" cy="150" r="22" fill="#E2531B"/><path d="M312 150l7 7 13-15" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="76" cy="46" r="9" fill="#FFB98E"/><circle cx="340" cy="40" r="6" fill="#FFB98E"/><circle cx="96" cy="150" r="5" fill="#FFB98E"/></svg>';
 function sumHtml(all,hot,cp){
@@ -456,6 +463,8 @@ function sumHtml(all,hot,cp){
   var ttl=n?'오늘 처리할 일이 <b>'+n+'건</b> 있어요':'오늘 급하게 처리할 일은 <b>없어요</b>';
   return '<div class="hm-hero2'+(cp?' cp':'')+'"><div><h2>'+ttl+'</h2><p>지연 '+late.length+'건 · 오늘 마감 '+tod.length+'건 · 이번 주 마감 '+wk.length+'건</p><div class="hm-pills"><button class="imp" data-act="view" data-id="all">중요<em'+(hot?'':' class="z"')+'>'+hot+'</em></button><button data-act="view" data-id="todo">진행 중<em'+(td.length?'':' class="z"')+'>'+td.length+'</em></button><button data-act="view" data-id="me">회신할 메일<em'+(me.length?'':' class="z"')+'>'+me.length+'</em></button><button data-act="view" data-id="wait">회신 대기<em'+(wt.length?'':' class="z"')+'>'+wt.length+'</em></button></div></div>'+ILLU+'</div>';
 }
+var MAN="<h3>1. 처음 시작<\/h3>\n<ol><li>설치 파일(TODOLIST-Setup.exe)을 실행하면 자동으로 설치되고 프로그램이 열립니다.<\/li>\n<li>첫 실행 때 \"메일 연동 설정 중\" 화면이 1~2분 나옵니다. Outlook 보안 창이 뜨면 <b>허용<\/b>을 눌러 주세요.<\/li>\n<li>설정이 끝나면 대시보드가 열립니다. 이후에는 Windows를 켜면 프로그램이 자동으로 시작됩니다.<\/li><\/ol>\n<p class=\"n\">Outlook 클래식(데스크톱 버전)이 설치되어 있고 로그인되어 있어야 메일 연동이 됩니다.<\/p>\n\n<h3>2. 화면 구성<\/h3>\n<table><tr><th>메뉴<\/th><th>보이는 것<\/th><\/tr>\n<tr><td>대시보드<\/td><td>오늘 처리할 일, 내 할 일(기한 순), 메일 현황, 프로젝트별 진행률을 한 화면에서 봅니다.<\/td><\/tr>\n<tr><td>전체<\/td><td>내 할 일, 회신할 메일, 회신 대기를 색으로 구분해 모두 보여줍니다.<\/td><\/tr>\n<tr><td>할 일<\/td><td>직접 추가한 일만 보여줍니다.<\/td><\/tr>\n<tr><td>회신할 메일<\/td><td>내가 수신자(받는 사람)인데 아직 회신하지 않은 메일입니다.<\/td><\/tr>\n<tr><td>회신 대기<\/td><td>내가 보냈는데 아직 회신이 없는 메일입니다.<\/td><\/tr>\n<tr><td>완료 / 삭제함<\/td><td>완료하거나 지운 항목입니다. 언제든 되돌릴 수 있습니다.<\/td><\/tr><\/table>\n<p class=\"n\">메뉴 옆 빨간 숫자는 처리할 건수입니다. 0건이면 표시하지 않습니다.<\/p>\n\n<h3>3. 할 일 추가하기<\/h3>\n<ol><li>왼쪽 아래 <b>+ 직접 추가<\/b>를 누릅니다.<\/li>\n<li>내용을 적고, 필요하면 프로젝트·기한·메모·중요도를 고른 뒤 <b>추가<\/b>를 누릅니다.<\/li>\n<li>항목 왼쪽 동그라미를 누르면 완료로 넘어갑니다. 실수로 눌렀으면 \"완료\" 메뉴에서 되돌리세요.<\/li>\n<li>항목을 누르면 오른쪽에서 제목·기한·메모·프로젝트·중요도를 바로 고칠 수 있습니다. 입력창 밖을 누르면 저장됩니다.<\/li><\/ol>\n<p class=\"n\">추가 창에 Outlook 메일 파일(.msg, .eml)을 끌어다 놓으면 제목·날짜·프로젝트가 자동으로 채워집니다.<\/p>\n\n<h3>4. 메일 목록 (자동)<\/h3>\n<ul><li><b>회신할 메일<\/b>: 프로그램을 처음 켠 시점부터 받은 메일 중, 내가 받는 사람(TO)이고 아직 회신하지 않은 메일입니다. 참조(CC)와 자동 발송 메일은 제외합니다.<\/li>\n<li><b>회신 대기<\/b>: 보낸 편지함의 메일 중 같은 제목의 회신이 아직 없는 메일입니다.<\/li>\n<li>Outlook에서 회신하면 다음 갱신 때 목록에서 자동으로 사라집니다. 직접 정리하려면 <b>회신 완료<\/b>(또는 <b>회신 받음<\/b>) 버튼을 누르세요.<\/li>\n<li>항목 상세의 <b>Outlook에서 메일 열기<\/b>로 원본 메일을 바로 열 수 있습니다.<\/li><\/ul>\n\n<h3>5. 중요 표시<\/h3>\n<p>항목을 누르고 <b>중요도<\/b>를 \"높음\"으로 바꾸면 주황색 배경과 테두리로 눈에 띄게 표시되고, 대시보드 상단 \"중요\" 숫자에도 잡힙니다.<\/p>\n\n<h3>6. 프로젝트 관리<\/h3>\n<ul><li>왼쪽 아래 <b>프로젝트<\/b>를 누르면 프로젝트를 추가·삭제할 수 있습니다.<\/li>\n<li>할 일을 추가할 때 새 이름을 입력해도 자동으로 등록됩니다.<\/li>\n<li>삭제해도 이미 그 프로젝트로 분류된 항목은 그대로 남습니다.<\/li>\n<li>메일을 프로젝트별로 자동 분류하려면 <code>C:\\MailTodo\\projects.csv<\/code>에 프로젝트 이름과 키워드(제목에 들어가는 단어, <code>|<\/code>로 구분)를 적습니다.<\/li><\/ul>\n\n<h3>7. 알림과 자동 갱신<\/h3>\n<ul><li>아침 8시 이후 처음 한 번, 오늘 마감·지연·중요 임박 건수와 메일 건수를 알려줍니다. 오후 3시 이후에는 마감·지연이 남아 있을 때만 한 번 더 알려줍니다. 알림을 누르면 창이 열립니다.<\/li>\n<li>메일은 매일 09:00 / 13:00 / 17:00과 Windows 로그인 때 자동으로 갱신됩니다.<\/li>\n<li>창을 닫아도 프로그램은 시계 옆 트레이에서 계속 실행됩니다. 완전히 끄려면 트레이 아이콘을 우클릭해서 <b>종료<\/b>를 누르세요.<\/li>\n<li>트레이 메뉴의 <b>지금 새로고침<\/b>으로 화면을 바로 새로 읽을 수 있습니다.<\/li><\/ul>\n\n<h3>8. 백업과 복원<\/h3>\n<p>직접 추가한 할 일은 이 PC의 프로그램 안에 저장됩니다. PC를 바꾸거나 프로그램을 다시 설치할 때는 <b>프로젝트<\/b> 창의 <b>할 일 백업 저장<\/b>으로 파일을 받아 두었다가, 새로 설치한 뒤 <b>백업 불러오기<\/b>로 복원하세요.<\/p>\n\n<h3>9. 문제가 생겼을 때<\/h3>\n<table><tr><th>증상<\/th><th>확인할 것<\/th><\/tr>\n<tr><td>메일이 하나도 안 보임<\/td><td>Outlook이 켜져 있고 로그인되어 있는지 확인하세요. 상세 내용은 <code>C:\\MailTodo\\mailtodo.log<\/code>에 있습니다.<\/td><\/tr>\n<tr><td>회신할 메일이 0건<\/td><td>프로그램을 처음 켠 시점 이후에 받은 메일만 모읍니다. 제외 대상(참조, 자동 발송)도 확인하세요.<\/td><\/tr>\n<tr><td>알림이 안 뜸<\/td><td>Windows의 \"집중 지원(방해 금지)\"이 켜져 있는지, 알림 설정에서 이 프로그램이 허용되어 있는지 확인하세요.<\/td><\/tr>\n<tr><td>화면이 예전 모양<\/td><td>인터넷 연결을 확인하고 트레이의 \"지금 새로고침\"을 두 번 눌러 보세요.<\/td><\/tr>\n<tr><td>Outlook 보안 창이 계속 뜸<\/td><td>안티바이러스 설정 때문일 수 있습니다. 허용을 누르고 IT 담당자에게 문의하세요.<\/td><\/tr><\/table>\n\n<h3>10. 삭제<\/h3>\n<p>Windows 설정 → 앱 → \"TO DO LIST\" → 제거. 자동 갱신 등록도 함께 지워집니다. 메일 정리 파일이 들어 있는 <code>C:\\MailTodo<\/code> 폴더는 필요 없으면 직접 삭제하세요.<\/p>\n";
+function manHtml(){if(!manOpen)return '';return '<div class="mdl" id="mnl"><div class="mdc man" role="dialog" aria-modal="true" aria-label="사용법"><div class="mdh">사용법</div><div class="mnb">'+MAN+'</div><div class="fr" style="margin-top:14px"><button class="b1" type="button" data-act="mnx">닫기</button></div></div></div>';}
 function addProj(n){n=String(n||'').trim();if(!n||n==='미분류'||n==='__none')return false;if(userProj.indexOf(n)>=0)return false;userProj.push(n);save('mt_pl',userProj);return true;}
 function pmHtml(){if(!pmOpen)return '';var cn={};items().forEach(function(x){if(x.trash||!x.proj)return;cn[x.proj]=(cn[x.proj]||0)+1;});
   var auto={};PROJRULES.forEach(function(r){if(r.name)auto[r.name]=1;});
@@ -501,7 +510,7 @@ function render(){
   var hot=open(function(x){return x.prio==='h';}).length;
   var cnt={home:0,me:meN,all:waits.length+meN+todosN,wait:waits.length,todo:todosN,done:all.filter(function(x){return !x.trash&&x.done;}).length,trash:all.filter(function(x){return x.trash;}).length};
   var pset={};PROJRULES.forEach(function(r){if(r.name)pset[r.name]=1;});userProj.forEach(function(n){pset[n]=1;});all.forEach(function(x){if(x.proj)pset[x.proj]=1;});projList=Object.keys(pset).sort();
-  if(view==='home'){app.innerHTML=homeHtml(all,cnt,hot,dueNow)+formHtml()+pmHtml();if(!formOpen)mi=null;wireForm();return;}
+  if(view==='home'){app.innerHTML=homeHtml(all,cnt,hot,dueNow)+formHtml()+pmHtml()+manHtml();if(!formOpen)mi=null;wireForm();return;}
   var list=all.filter(inView);
   if(pfilter==='__none')list=list.filter(function(x){return !x.proj;});else if(pfilter)list=list.filter(function(x){return x.proj===pfilter;});
   var rk={h:0,n:1,l:2};list.sort(function(a,b){if(view==='all'){var ua=urg(a),ub=urg(b);return (rk[a.prio]-rk[b.prio])||(ua-ub);}if(a.kind==='todo'&&b.kind==='todo'&&a.dd!==b.dd)return a.dd-b.dd;return (rk[a.prio]-rk[b.prio])||(b.days-a.days);});
@@ -526,7 +535,7 @@ function render(){
     go.forEach(function(n){var c=!!col[n||'__none'];h+='<button class="gh" data-act="gt" data-id="'+esc(n||'__none')+'" aria-expanded="'+(c?'false':'true')+'"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate('+(c?-90:0)+'deg);transition:transform .15s"><path d="M6 9l6 6 6-6"/></svg>'+esc(n||'미분류')+'<b>'+gm[n].length+'</b></button>'+(c?'':gm[n].map(listItem).join(''));});
   }else h+=list.map(listItem).join('');
   h+='</div>'+detail(cur)+'</div></div></div>';
-  app.innerHTML=h+formHtml()+pmHtml(); if(!formOpen)mi=null;
+  app.innerHTML=h+formHtml()+pmHtml()+manHtml(); if(!formOpen)mi=null;
   if(cur&&(cur.src==='mail'||cur.file))ensureTr(cur);
   wireForm();
 }
@@ -583,6 +592,8 @@ app.addEventListener('click',function(e){
   else if(act==='cancel'){formOpen=false;render();}
   else if(act==='pm'){pmOpen=true;render();setTimeout(function(){var x=document.getElementById('pm-n');if(x)x.focus();},30);}
   else if(act==='pmx'){pmOpen=false;render();}
+  else if(act==='man'){manOpen=true;render();}
+  else if(act==='mnx'){manOpen=false;render();}
   else if(act==='bkx'){var o={v:1,at:new Date().toISOString()};['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf'].forEach(function(k){try{var s=localStorage.getItem(k);if(s)o[k]=JSON.parse(s);}catch(er){}});var bl=new Blob([JSON.stringify(o)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='todo-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},500);}
   else if(act==='bki'){var bf=document.getElementById('bk-f');if(bf)bf.click();}
   else if(act==='pmdel'){userProj=userProj.filter(function(n){return n!==id;});save('mt_pl',userProj);if(pfilter===id){pfilter='';save('mt_pf','');}render();}
@@ -603,7 +614,7 @@ app.addEventListener('change',function(e){
   else if(el.id==='tt'||el.id==='dd'||el.id==='nt'){var mid=el.getAttribute('data-id');manual.forEach(function(m){if(m.id===mid){if(el.id==='tt'){var v0=el.value.trim();if(v0)m.title=v0;}else if(el.id==='dd')m.due=el.value||'';else m.note=el.value.trim();}});save('mt_manual',manual);render();}
   else if(el.id==='pj'){var id=el.getAttribute('data-id'),v=el.value.trim();if(v){projOv[id]=v;addProj(v);}else delete projOv[id];save('mt_proj',projOv);render();}
 });
-document.addEventListener('keydown',function(e){if(e.key==='Escape'&&pmOpen){pmOpen=false;render();}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&(pmOpen||manOpen)){pmOpen=false;manOpen=false;render();}});
 app.addEventListener('change',function(e){if(!e.target||e.target.id!=='bk-f')return;var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1)throw 0;if(!confirm('현재 저장된 할 일 대신 백업 내용으로 바꿉니다. 계속할까요?'))return;['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf'].forEach(function(k){if(k in o)localStorage.setItem(k,JSON.stringify(o[k]));});(window.top||window).location.reload();}catch(er){alert('백업 파일을 읽지 못했습니다.');}};r.readAsText(f);});
 render();
 app.addEventListener('submit',function(e){
@@ -614,7 +625,7 @@ app.addEventListener('submit',function(e){
   manual.push({id:id,type:'todo',title:v,project:pj,base:today(),due:document.getElementById('qa-d').value||'',note:'',done:false});
   save('mt_manual',manual);render();var n=document.getElementById('qa-t');if(n)n.focus();
 });
-setInterval(function(){var a=document.activeElement;if(!formOpen&&!pmOpen&&!(a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.value))))(window.top||window).location.reload();},300000);
+setInterval(function(){var a=document.activeElement;if(!formOpen&&!pmOpen&&!manOpen&&!(a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.value))))(window.top||window).location.reload();},300000);
 </script>
 </body>
 </html>
