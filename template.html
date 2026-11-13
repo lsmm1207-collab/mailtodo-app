@@ -228,7 +228,7 @@ button,[data-act],select{cursor:pointer}
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611131640';
+const TVER='202611131700';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -601,7 +601,7 @@ app.addEventListener('click',function(e){
   else if(act==='pmx'){pmOpen=false;render();}
   else if(act==='man'){manOpen=true;render();}
   else if(act==='rf'){var rb=e.target.closest('button');if(rb){rb.textContent='↻ 메일 가져오는 중…';rb.disabled=true;}
-    if(/Electron/.test(navigator.userAgent)){window.open('mailtodo-refresh://now');setTimeout(function(){(window.top||window).location.reload();},150000);}
+    if(/MailTodoApp\/3/.test(navigator.userAgent)){window.open('mailtodo-refresh://now');setTimeout(function(){(window.top||window).location.reload();},150000);}
     else (window.top||window).location.reload();}
   else if(act==='fb'){fbOpen=true;render();setTimeout(function(){var x=document.getElementById('fb-m');if(x)x.focus();},30);}
   else if(act==='fbx'){fbOpen=false;render();}
