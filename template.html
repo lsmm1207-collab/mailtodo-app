@@ -190,7 +190,7 @@ input,textarea,select,[contenteditable]{user-select:text;-webkit-user-select:tex
 button,[data-act],select{cursor:pointer}
 *{scrollbar-width:thin;scrollbar-color:#E5D8CB transparent}
 *::-webkit-scrollbar{width:10px;height:10px}*::-webkit-scrollbar-thumb{background:#E5D8CB;border-radius:6px;border:2px solid transparent;background-clip:content-box}
-.hm{display:grid;grid-template-columns:236px minmax(0,1fr);height:100vh;min-width:900px;min-height:560px;gap:0}
+.hm{display:grid;grid-template-columns:236px minmax(0,1fr);height:calc(100vh / var(--z,1));min-width:900px;min-height:560px;gap:0}
 .hm-top{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:18px;flex-wrap:nowrap;background:#fff;border-right:1px solid #F0E6DA;padding:22px 14px 16px;overflow:auto}
 .hm-top>div:first-child{padding:0 8px}
 .hm-t{font-size:22px}.hm-d{font-size:12px;margin-top:6px;line-height:1.5}
@@ -222,13 +222,26 @@ button,[data-act],select{cursor:pointer}
 .hm-tools{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.hm-tools button{flex:1 1 calc(50% - 4px);min-height:34px;padding:4px 6px;justify-content:center;font-size:12px;color:#7A6E64;border-radius:10px;white-space:nowrap;display:flex;align-items:center}
 .hm-tools button:hover{background:#FFF3EA;color:#C2410C}
 .idle *{animation-play-state:paused!important}
+
+html.dark{filter:invert(1) hue-rotate(180deg);background:#fff}
+html.dark img,html.dark svg image,html.dark .keep{filter:invert(1) hue-rotate(180deg)}
+.hm-sq{margin:8px 0 2px;position:relative}.hm-sq input{width:100%;min-height:38px;border:1px solid #EADFD3;border-radius:12px;padding:0 12px;background:#fff;font:inherit;font-size:13px;color:#2A2420;box-sizing:border-box}
+.hm-sq input:focus{outline:2px solid #F2561D;outline-offset:1px}
+.sub{border:1px solid var(--line);border-radius:16px;padding:14px 16px}.sub .l{font-size:13px;color:var(--mut);margin-bottom:8px;display:flex;justify-content:space-between}
+.sub ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.sub li{display:flex;align-items:center;gap:8px;min-height:36px}.sub li button.ck{width:22px;height:22px;border-radius:7px;border:1.5px solid #C9BBAA;background:#fff;cursor:pointer;flex:none;padding:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;line-height:1}
+.sub li.d button.ck{background:#F2561D;border-color:#F2561D}.sub li.d span.t{color:#9A8F85;text-decoration:line-through}
+.sub li span.t{flex:1;font-size:14px;word-break:break-all}.sub li button.sx{border:0;background:none;color:#B3A89D;cursor:pointer;font-size:16px;padding:4px 8px}
+.sub .sa{display:flex;gap:6px;margin-top:8px}.sub .sa input{flex:1;min-height:38px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:14px}
+.bdg{display:inline-block;margin-left:6px;font-size:11px;padding:1px 7px;border-radius:99px;background:#F3ECE4;color:#7A6E64;vertical-align:middle}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:#2A2420;color:#fff;padding:10px 18px;border-radius:12px;font-size:14px;z-index:9999;box-shadow:0 6px 24px rgba(0,0,0,.2)}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611131800';
+const TVER='202611131930';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -236,6 +249,9 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){retur
 function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
 var done=load('mt_done',{}), hidden=load('mt_hidden',{}), manual=load('mt_manual',[]), view=load('mt_view2','home'), sel=null, formOpen=false, pmOpen=false, manOpen=false, fbOpen=false, userProj=load('mt_pl',[]), prio=load('mt_prio',{}), projOv=load('mt_proj',{}), pfilter=load('mt_pf',''), projList=[], trCache=load('mt_tr',{}), translator=null, trState='check', trPct=0, pending={}, col=load('mt_col',{});
+var qry='',theme=load('mt_theme','light'),fsz=load('mt_fs',1),mtoast='';
+function applyLook(){var r=document.documentElement;r.classList.toggle('dark',theme==='dark');r.style.zoom=fsz===1?'':String(fsz);r.style.setProperty('--z',String(fsz));}
+applyLook();
 var PROJRULES=(DATA&&DATA.projects)||[], mi=null;
 function projMatch(t){t=String(t||'').toLowerCase();for(var i=0;i<PROJRULES.length;i++){var p=PROJRULES[i],ks=[].concat(p.keywords||[]);for(var j=0;j<ks.length;j++){var k=String(ks[j]).trim().toLowerCase();if(k&&t.indexOf(k)>=0)return p.name;}}return '';}
 function dec(u,cs){try{return new TextDecoder(cs||'utf-8').decode(u);}catch(e){return new TextDecoder('utf-8').decode(u);}}
@@ -385,7 +401,7 @@ function items(){
   manual.forEach(function(x){
     var wait=x.type==='wait', d=dayDiff(x.base), di=dueInfo(x.due), tr=wait?tier(d):(di.k==='late'?'u':di.k==='today'?'h':di.k==='soon'?'w':'t');
     out.push({id:x.id,kind:wait?'wait':'todo',src:'manual',file:!!x.file,title:x.title,proj:projOv[x.id]||x.project||'',who:[projOv[x.id]||x.project||'',x.from||''].filter(Boolean).join(' · '),summary:x.summary||'',preview:x.preview||'',first:x.base,last:x.base,count:1,
-      days:d,lastDays:d,tier:tr,due:x.due||'',dd:di.d,dl:di.l,note:x.note||'',done:!!x.done,trash:!!x.deleted,prio:prio[x.id]||'n'});
+      days:d,lastDays:d,tier:tr,due:x.due||'',dd:di.d,dl:di.l,note:x.note||'',subs:x.subs||[],rep:x.rep||'',entry:x.entry||'',done:!!x.done,trash:!!x.deleted,prio:prio[x.id]||'n'});
   });
   return out;
 }
@@ -414,8 +430,34 @@ function kc(x){return x.kind==='me'?'me':x.kind==='wait'?'wt':x.tier;}
 function listItem(x){
   var t=x.tier, circ=(x.kind==='todo'&&x.due)?'<div class="dc t-'+t+'"><div class="n" style="font-size:'+(x.dl.length>3?'15px':'20px')+'">'+esc(x.dl)+'</div><div class="u">'+(x.dd<0?'지연':'마감')+'</div></div>':(x.kind==='wait'||x.kind==='me')?'<div class="dc t-'+kc(x)+'"><div class="n">'+x.days+'</div><div class="u">일</div></div>':'<div class="dc t-t">'+ico('check','#2B4C8C',22)+'</div>';
   return '<button class="it'+(x.done?' dim':'')+(x.prio==='h'&&!x.done?' hi':'')+'" data-act="sel" data-id="'+esc(x.id)+'" aria-current="'+(x.id===sel?'true':'false')+'">'+circ+
-    '<div class="im"><div class="tt">'+esc(x.title)+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+kc(x)+'">'+pt(x)+'</span></button>';
+    '<div class="im"><div class="tt">'+esc(x.title)+(x.subs&&x.subs.length?'<span class="bdg">'+x.subs.filter(function(q){return q.d;}).length+'/'+x.subs.length+'</span>':'')+(x.rep?'<span class="bdg">반복</span>':'')+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+kc(x)+'">'+pt(x)+'</span></button>';
 }
+
+function subHtml(x){
+  var a=x.subs||[],dn=a.filter(function(q){return q.d;}).length,id=esc(x.id);
+  return '<div class="sub"><div class="l"><span>체크리스트</span><span>'+(a.length?dn+'/'+a.length+' 완료':'')+'</span></div><ul>'+a.map(function(q,i){return '<li class="'+(q.d?'d':'')+'"><button class="ck" data-act="sd" data-id="'+id+'" data-i="'+i+'" aria-label="'+(q.d?'완료 해제':'완료')+'">'+(q.d?'✓':'')+'</button><span class="t">'+esc(q.t)+'</span><button class="sx" data-act="sx" data-id="'+id+'" data-i="'+i+'" aria-label="삭제">×</button></li>';}).join('')+'</ul><div class="sa"><input id="sa" data-id="'+id+'" maxlength="80" placeholder="단계를 적고 Enter"><button class="b2 sm" data-act="sa" data-id="'+id+'" type="button">추가</button></div></div>';
+}
+function pad(n){return (n<10?'0':'')+n;}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function nextDue(due,rep,rd){
+  var t=today(),d=new Date(due+'T00:00:00'),n=0;
+  do{
+    if(rep==='d'){do{d.setDate(d.getDate()+1);}while(d.getDay()===0||d.getDay()===6);}
+    else if(rep==='w')d.setDate(d.getDate()+7);
+    else{var day=rd||d.getDate();d.setDate(1);d.setMonth(d.getMonth()+1);var last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();d.setDate(Math.min(day,last));}
+    n++;
+  }while(iso(d)<=t&&n<400);
+  return iso(d);
+}
+function spawnNext(x){
+  if(!x||!x.rep||!x.due||x.spawned)return false;
+  var rd=x.rd||new Date(x.due+'T00:00:00').getDate();
+  x.spawned=true;
+  manual.push({id:'x:'+Date.now()+'_r',type:'todo',title:x.title,project:x.project||'',base:today(),due:nextDue(x.due,x.rep,rd),note:x.note||'',done:false,rep:x.rep,rd:rd,subs:(x.subs||[]).map(function(q){return {t:q.t,d:false};})});
+  return true;
+}
+function showToast(m){mtoast=m;var o=document.getElementById('toast');if(o)o.remove();var t=document.createElement('div');t.id='toast';t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){var q=document.getElementById('toast');if(q)q.remove();},2600);}
+function searchHit(x,q){var h=[x.title,x.proj,x.who,x.summary,x.preview,x.note,(x.subs||[]).map(function(s){return s.t;}).join(' ')].join(' ').toLowerCase();return q.toLowerCase().split(/\s+/).filter(Boolean).every(function(w){return h.indexOf(w)>=0;});}
 function detail(x){
   if(!x)return '<div class="det"><div class="bar"></div><div class="dp"><div class="empty">왼쪽에서 항목을 선택하세요.</div></div></div>';
   var id=esc(x.id), h='<div class="det"><div class="bar"></div><div class="dp"><div class="dh"><div><h2>'+esc(x.title)+'</h2>'+trSub(x)+'<div class="w">'+esc(x.who)+(x.src==='manual'?(x.who?' · ':'')+'직접 추가':'')+'</div></div><span class="pill t-'+kc(x)+'">'+pt(x)+'</span></div>';
@@ -439,6 +481,8 @@ function detail(x){
   if(!x.trash&&x.src==='manual'){
     h+='<div class="pr"><label class="l" for="tt">제목</label><input id="tt" data-id="'+id+'" value="'+esc(x.title)+'" maxlength="120"></div>'+
        '<div class="pr"><label class="l" for="dd">기한</label><input id="dd" type="date" data-id="'+id+'" value="'+esc(x.due)+'" style="max-width:200px"></div>'+
+       '<div class="pr"><label class="l" for="rp">반복</label><select id="rp" data-id="'+id+'">'+[['','반복 안 함'],['d','매 평일'],['w','매주'],['m','매월']].map(function(o){return '<option value="'+o[0]+'"'+(x.rep===o[0]?' selected':'')+'>'+o[1]+'</option>';}).join('')+'</select>'+(x.rep&&!x.due?'<span class="l" style="color:#C2410C">기한을 정해야 반복됩니다</span>':'')+'</div>'+
+       subHtml(x)+
        '<div class="box"><div class="l">메모</div><textarea id="nt" data-id="'+id+'" rows="4" maxlength="1000" placeholder="메모를 적어 두세요. 입력창 밖을 누르면 저장됩니다.">'+esc(x.note)+'</textarea></div>';
   }
   if(!x.trash)h+='<div class="pr"><label class="l" for="pj">프로젝트</label><input id="pj" list="pjl" data-id="'+id+'" value="'+esc(x.proj)+'" placeholder="비워 두면 자동 분류" maxlength="40"><datalist id="pjl">'+projList.map(function(n){return '<option value="'+esc(n)+'">';}).join('')+'</datalist></div>';
@@ -447,6 +491,7 @@ function detail(x){
   if(x.trash){h+='<button class="b1" data-act="restore" data-id="'+id+'">복원</button>';}
   else{
     if(x.entry)h+='<a class="b2 lk" href="mailtodo:open?id='+encodeURIComponent(x.entry)+'&amp;s='+encodeURIComponent(x.title)+'" title="Outlook에서 메일을 엽니다">Outlook에서 메일 열기</a><button class="b2" data-act="cp" data-id="'+id+'" title="Outlook 검색창에 붙여넣기용">제목 복사</button>';
+    if(x.src==='mail'&&!x.done)h+='<button class="b2" data-act="mk" data-id="'+id+'" title="이 메일에 대한 내 할 일을 만듭니다">할 일로 추가</button>';
     h+='<button class="b3" data-act="del" data-id="'+id+'">삭제</button>';
     h+=x.done?'<button class="b2" data-act="toggle" data-id="'+id+'">되돌리기</button>':'<button class="b1" data-act="toggle" data-id="'+id+'">'+(x.kind==='wait'?'회신 받음':x.kind==='me'?'회신 완료':'완료')+'</button>';
   }
@@ -457,7 +502,7 @@ function urg(x){return x.kind==='todo'?(x.due?x.dd:9999):(5-x.days);}
 function hmTop(cnt){
   var d=new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'});
   var tabs=['home','all','todo','me','wait','done','trash'];
-  return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+' · v'+TVER.slice(-8)+'</div></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em'+(k==='done'||k==='trash'?' class="g"':'')+'>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-pjb" data-act="pm">＋ 프로젝트 추가</button><div class="hm-tools"><button data-act="rf" title="화면 새로고침">↻ 새로고침</button><button data-act="man">사용법</button><button data-act="bkx" title="할 일·프로젝트·완료 내역을 파일로 저장">백업 저장</button><button data-act="bki" title="저장해 둔 백업 파일로 되돌리기">백업 복원</button><input type="file" id="bk-f" accept=".json" hidden>'+(FB_ON?'<button data-act="fb">피드백</button>':'')+'</div><button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
+  return '<div class="hm-top"><div><div class="hm-t">TO DO LIST</div><div class="hm-d">'+d+(DATA?' · 메일 갱신 '+esc(DATA.generated):'')+' · v'+TVER.slice(-8)+'</div></div><div class="hm-sq"><input id="q" type="search" value="'+esc(qry)+'" placeholder="검색  ( / 키 )" autocomplete="off" aria-label="검색"></div><div class="hm-nav" role="tablist" aria-label="보기">'+tabs.map(function(k){return '<button data-act="view" data-id="'+k+'" aria-current="'+(k===view?'true':'false')+'">'+VN[k][1]+(k==='home'||!cnt[k]?'':'<em'+(k==='done'||k==='trash'?' class="g"':'')+'>'+cnt[k]+'</em>')+'</button>';}).join('')+'<button class="hm-pjb" data-act="pm">＋ 프로젝트 추가</button><div class="hm-tools"><button data-act="rf" title="화면 새로고침">↻ 새로고침</button><button data-act="man">사용법</button><button data-act="th">'+(theme==='dark'?'밝은 화면':'어두운 화면')+'</button><button data-act="fs">글자 '+({1:'보통',1.12:'크게',1.25:'아주 크게'})[fsz]+'</button><button data-act="bkx" title="할 일·프로젝트·완료 내역을 파일로 저장">백업 저장</button><button data-act="bki" title="저장해 둔 백업 파일로 되돌리기">백업 복원</button><input type="file" id="bk-f" accept=".json" hidden>'+(FB_ON?'<button data-act="fb">피드백</button>':'')+'</div><button class="hm-add" data-act="open">+ 직접 추가</button></div></div>';
 }
 var ILLU='<svg class="hm-il" viewBox="0 0 360 190" role="img" aria-label="체크리스트 일러스트"><rect x="150" y="14" width="170" height="160" rx="22" fill="#fff" transform="rotate(5 235 94)"/><rect x="120" y="22" width="180" height="160" rx="22" fill="#fff" stroke="#F3C7A8" stroke-width="3" transform="rotate(-4 210 102)"/><g transform="rotate(-4 210 102)"><circle cx="150" cy="60" r="13" fill="#FFD3B8"/><path d="M144 60l5 5 9-10" fill="none" stroke="#E2531B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="174" y="55" width="100" height="10" rx="5" fill="#F1EAE0"/><circle cx="150" cy="100" r="13" fill="#FFD3B8"/><path d="M144 100l5 5 9-10" fill="none" stroke="#E2531B" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="174" y="95" width="76" height="10" rx="5" fill="#F1EAE0"/><circle cx="150" cy="140" r="13" fill="none" stroke="#D9CBBB" stroke-width="3"/><rect x="174" y="135" width="90" height="10" rx="5" fill="#F1EAE0"/></g><circle cx="322" cy="150" r="22" fill="#E2531B"/><path d="M312 150l7 7 13-15" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="76" cy="46" r="9" fill="#FFB98E"/><circle cx="340" cy="40" r="6" fill="#FFB98E"/><circle cx="96" cy="150" r="5" fill="#FFB98E"/></svg>';
 function sumHtml(all,hot,cp){
@@ -469,7 +514,7 @@ function sumHtml(all,hot,cp){
   return '<div class="hm-hero2'+(cp?' cp':'')+'"><div><h2>'+ttl+'</h2><p>지연 '+late.length+'건 · 오늘 마감 '+tod.length+'건 · 이번 주 마감 '+wk.length+'건</p><div class="hm-pills"><button class="imp" data-act="view" data-id="all">중요<em'+(hot?'':' class="z"')+'>'+hot+'</em></button><button data-act="view" data-id="todo">진행 중<em'+(td.length?'':' class="z"')+'>'+td.length+'</em></button><button data-act="view" data-id="me">회신할 메일<em'+(me.length?'':' class="z"')+'>'+me.length+'</em></button><button data-act="view" data-id="wait">회신 대기<em'+(wt.length?'':' class="z"')+'>'+wt.length+'</em></button></div></div>'+ILLU+'</div>';
 }
 var FB_ON=true,FB_URL='https://docs.google.com/forms/d/e/1FAIpQLScpWWXV6S4hlsaG1wPBc8Jk-Wwihs6YJ4H-6G0na5okwbwXGw/formResponse';
-var MAN="<h3>1. 처음 시작<\/h3>\n<ol><li>설치 파일(TODOLIST-Setup.exe)을 실행하면 자동으로 설치되고 프로그램이 열립니다.<\/li>\n<li>첫 실행 때 \"메일 연동 설정 중\" 화면이 1~2분 나옵니다. Outlook 보안 창이 뜨면 <b>허용<\/b>을 눌러 주세요.<\/li>\n<li>설정이 끝나면 대시보드가 열립니다. 이후에는 Windows를 켜면 프로그램이 자동으로 시작됩니다.<\/li><\/ol>\n<p class=\"n\">Outlook 클래식(데스크톱 버전)이 설치되어 있고 로그인되어 있어야 메일 연동이 됩니다.<\/p>\n\n<h3>2. 화면 구성<\/h3>\n<table><tr><th>메뉴<\/th><th>보이는 것<\/th><\/tr>\n<tr><td>대시보드<\/td><td>오늘 처리할 일, 내 할 일(기한 순), 메일 현황, 프로젝트별 진행률을 한 화면에서 봅니다.<\/td><\/tr>\n<tr><td>전체<\/td><td>내 할 일, 회신할 메일, 회신 대기를 색으로 구분해 모두 보여줍니다.<\/td><\/tr>\n<tr><td>할 일<\/td><td>직접 추가한 일만 보여줍니다.<\/td><\/tr>\n<tr><td>회신할 메일<\/td><td>내가 수신자(받는 사람)인데 아직 회신하지 않은 메일입니다.<\/td><\/tr>\n<tr><td>회신 대기<\/td><td>내가 보냈는데 아직 회신이 없는 메일입니다.<\/td><\/tr>\n<tr><td>완료 / 삭제함<\/td><td>완료하거나 지운 항목입니다. 언제든 되돌릴 수 있습니다.<\/td><\/tr><\/table>\n<p class=\"n\">메뉴 옆 빨간 숫자는 처리할 건수입니다. 0건이면 표시하지 않습니다.<\/p>\n\n<h3>3. 할 일 추가하기<\/h3>\n<ol><li>왼쪽 아래 <b>+ 직접 추가<\/b>를 누릅니다.<\/li>\n<li>내용을 적고, 필요하면 프로젝트·기한·메모·중요도를 고른 뒤 <b>추가<\/b>를 누릅니다.<\/li>\n<li>항목 왼쪽 동그라미를 누르면 완료로 넘어갑니다. 실수로 눌렀으면 \"완료\" 메뉴에서 되돌리세요.<\/li>\n<li>항목을 누르면 오른쪽에서 제목·기한·메모·프로젝트·중요도를 바로 고칠 수 있습니다. 입력창 밖을 누르면 저장됩니다.<\/li><\/ol>\n<p class=\"n\">추가 창에 Outlook 메일 파일(.msg, .eml)을 끌어다 놓으면 제목·날짜·프로젝트가 자동으로 채워집니다.<\/p>\n\n<h3>4. 메일 목록 (자동)<\/h3>\n<ul><li><b>회신할 메일<\/b>: 프로그램을 처음 켠 시점부터 받은 메일 중, 내가 받는 사람(TO)이고 아직 회신하지 않은 메일입니다. 참조(CC)와 자동 발송 메일은 제외합니다.<\/li>\n<li><b>회신 대기<\/b>: 보낸 편지함의 메일 중 같은 제목의 회신이 아직 없는 메일입니다.<\/li>\n<li>Outlook에서 회신하면 다음 갱신 때 목록에서 자동으로 사라집니다. 직접 정리하려면 <b>회신 완료<\/b>(또는 <b>회신 받음<\/b>) 버튼을 누르세요.<\/li>\n<li>항목 상세의 <b>Outlook에서 메일 열기<\/b>로 원본 메일을 바로 열 수 있습니다.<\/li><\/ul>\n\n<h3>5. 중요 표시<\/h3>\n<p>항목을 누르고 <b>중요도<\/b>를 \"높음\"으로 바꾸면 주황색 배경과 테두리로 눈에 띄게 표시되고, 대시보드 상단 \"중요\" 숫자에도 잡힙니다.<\/p>\n\n<h3>6. 프로젝트 관리<\/h3>\n<ul><li>왼쪽 아래 <b>＋ 프로젝트 추가<\/b>를 누르면 프로젝트를 추가·삭제할 수 있습니다. 할 일 목록 위의 <b>＋ 추가<\/b> 버튼으로도 열 수 있습니다.<\/li>\n<li>할 일을 추가할 때 새 이름을 입력해도 자동으로 등록됩니다.<\/li>\n<li>삭제해도 이미 그 프로젝트로 분류된 항목은 그대로 남습니다.<\/li>\n<li>메일을 프로젝트별로 자동 분류하려면 <code>C:\\MailTodo\\projects.csv<\/code>에 프로젝트 이름과 키워드(제목에 들어가는 단어, <code>|<\/code>로 구분)를 적습니다.<\/li><\/ul>\n\n<h3>7. 알림과 자동 갱신<\/h3>\n<ul><li>아침 8시 이후 처음 한 번, 오늘 마감·지연·중요 임박 건수와 메일 건수를 알려줍니다. 오후 3시 이후에는 마감·지연이 남아 있을 때만 한 번 더 알려줍니다. 알림을 누르면 창이 열립니다.<\/li>\n<li>메일은 매일 09:00 / 13:00 / 17:00과 Windows 로그인 때 자동으로 갱신됩니다.<\/li>\n<li>창을 닫아도 프로그램은 시계 옆 트레이에서 계속 실행됩니다. 완전히 끄려면 트레이 아이콘을 우클릭해서 <b>종료<\/b>를 누르세요.<\/li>\n<li>왼쪽 아래 <b>↻ 새로고침<\/b>이나 트레이 메뉴의 <b>지금 새로고침<\/b>으로 화면을 바로 새로 읽을 수 있습니다. (메일 자체는 위 시각에 Outlook에서 새로 읽어 옵니다.)<\/li><\/ul>\n\n<h3>8. 백업과 복원<\/h3>\n<p>직접 추가한 할 일은 이 PC의 프로그램 안에 저장됩니다. PC를 바꾸거나 프로그램을 다시 설치할 때는 왼쪽 아래의 <b>백업 저장<\/b>으로 파일을 받아 두었다가, 새로 설치한 뒤 <b>백업 복원<\/b>으로 되돌리세요.<\/p>\n\n<h3>9. 문제가 생겼을 때<\/h3>\n<table><tr><th>증상<\/th><th>확인할 것<\/th><\/tr>\n<tr><td>메일이 하나도 안 보임<\/td><td>Outlook이 켜져 있고 로그인되어 있는지 확인하세요. 상세 내용은 <code>C:\\MailTodo\\mailtodo.log<\/code>에 있습니다.<\/td><\/tr>\n<tr><td>회신할 메일이 0건<\/td><td>프로그램을 처음 켠 시점 이후에 받은 메일만 모읍니다. 제외 대상(참조, 자동 발송)도 확인하세요.<\/td><\/tr>\n<tr><td>알림이 안 뜸<\/td><td>Windows의 \"집중 지원(방해 금지)\"이 켜져 있는지, 알림 설정에서 이 프로그램이 허용되어 있는지 확인하세요.<\/td><\/tr>\n<tr><td>화면이 예전 모양<\/td><td>인터넷 연결을 확인하고 트레이의 \"지금 새로고침\"을 두 번 눌러 보세요.<\/td><\/tr>\n<tr><td>Outlook 보안 창이 계속 뜸<\/td><td>안티바이러스 설정 때문일 수 있습니다. 허용을 누르고 IT 담당자에게 문의하세요.<\/td><\/tr><\/table>\n\n<h3>10. 삭제<\/h3>\n<p>Windows 설정 → 앱 → \"TO DO LIST\" → 제거. 자동 갱신 등록도 함께 지워집니다. 메일 정리 파일이 들어 있는 <code>C:\\MailTodo<\/code> 폴더는 필요 없으면 직접 삭제하세요.<\/p>\n";
+var MAN="<h3>1. 처음 시작<\/h3>\n<ol><li>설치 파일(TODOLIST-Setup.exe)을 실행하면 자동으로 설치되고 프로그램이 열립니다.<\/li>\n<li>첫 실행 때 \"메일 연동 설정 중\" 화면이 1~2분 나옵니다. Outlook 보안 창이 뜨면 <b>허용<\/b>을 눌러 주세요.<\/li>\n<li>설정이 끝나면 대시보드가 열립니다. 이후에는 Windows를 켜면 프로그램이 자동으로 시작됩니다.<\/li><\/ol>\n<p class=\"n\">Outlook 클래식(데스크톱 버전)이 설치되어 있고 로그인되어 있어야 메일 연동이 됩니다.<\/p>\n\n<h3>2. 화면 구성<\/h3>\n<table><tr><th>메뉴<\/th><th>보이는 것<\/th><\/tr>\n<tr><td>대시보드<\/td><td>오늘 처리할 일, 내 할 일(기한 순), 메일 현황, 프로젝트별 진행률을 한 화면에서 봅니다.<\/td><\/tr>\n<tr><td>전체<\/td><td>내 할 일, 회신할 메일, 회신 대기를 색으로 구분해 모두 보여줍니다.<\/td><\/tr>\n<tr><td>할 일<\/td><td>직접 추가한 일만 보여줍니다.<\/td><\/tr>\n<tr><td>회신할 메일<\/td><td>내가 수신자(받는 사람)인데 아직 회신하지 않은 메일입니다.<\/td><\/tr>\n<tr><td>회신 대기<\/td><td>내가 보냈는데 아직 회신이 없는 메일입니다.<\/td><\/tr>\n<tr><td>완료 / 삭제함<\/td><td>완료하거나 지운 항목입니다. 언제든 되돌릴 수 있습니다.<\/td><\/tr><\/table>\n<p class=\"n\">메뉴 옆 빨간 숫자는 처리할 건수입니다. 0건이면 표시하지 않습니다.<\/p>\n\n<h3>3. 할 일 추가하기<\/h3>\n<ol><li>왼쪽 아래 <b>+ 직접 추가<\/b>를 누릅니다.<\/li>\n<li>내용을 적고, 필요하면 프로젝트·기한·메모·중요도를 고른 뒤 <b>추가<\/b>를 누릅니다.<\/li>\n<li>항목 왼쪽 동그라미를 누르면 완료로 넘어갑니다. 실수로 눌렀으면 \"완료\" 메뉴에서 되돌리세요.<\/li>\n<li>항목을 누르면 오른쪽에서 제목·기한·메모·프로젝트·중요도를 바로 고칠 수 있습니다. 입력창 밖을 누르면 저장됩니다.<\/li><\/ol>\n<p class=\"n\">추가 창에 Outlook 메일 파일(.msg, .eml)을 끌어다 놓으면 제목·날짜·프로젝트가 자동으로 채워집니다.<\/p>\n\n<h3>4. 메일 목록 (자동)<\/h3>\n<ul><li><b>회신할 메일<\/b>: 프로그램을 처음 켠 시점부터 받은 메일 중, 내가 받는 사람(TO)이고 아직 회신하지 않은 메일입니다. 참조(CC)와 자동 발송 메일은 제외합니다.<\/li>\n<li><b>회신 대기<\/b>: 보낸 편지함의 메일 중 같은 제목의 회신이 아직 없는 메일입니다.<\/li>\n<li>Outlook에서 회신하면 다음 갱신 때 목록에서 자동으로 사라집니다. 직접 정리하려면 <b>회신 완료<\/b>(또는 <b>회신 받음<\/b>) 버튼을 누르세요.<\/li>\n<li>항목 상세의 <b>Outlook에서 메일 열기<\/b>로 원본 메일을 바로 열 수 있습니다.<\/li><\/ul>\n\n<h3>5. 중요 표시<\/h3>\n<p>항목을 누르고 <b>중요도<\/b>를 \"높음\"으로 바꾸면 주황색 배경과 테두리로 눈에 띄게 표시되고, 대시보드 상단 \"중요\" 숫자에도 잡힙니다.<\/p>\n\n<h3>6. 프로젝트 관리<\/h3>\n<ul><li>왼쪽 아래 <b>＋ 프로젝트 추가<\/b>를 누르면 프로젝트를 추가·삭제할 수 있습니다. 할 일 목록 위의 <b>＋ 추가<\/b> 버튼으로도 열 수 있습니다.<\/li>\n<li>할 일을 추가할 때 새 이름을 입력해도 자동으로 등록됩니다.<\/li>\n<li>삭제해도 이미 그 프로젝트로 분류된 항목은 그대로 남습니다.<\/li>\n<li>메일을 프로젝트별로 자동 분류하려면 <code>C:\\MailTodo\\projects.csv<\/code>에 프로젝트 이름과 키워드(제목에 들어가는 단어, <code>|<\/code>로 구분)를 적습니다.<\/li><\/ul>\n\n<h3>7. 알림과 자동 갱신<\/h3>\n<ul><li>아침 8시 이후 처음 한 번, 오늘 마감·지연·중요 임박 건수와 메일 건수를 알려줍니다. 오후 3시 이후에는 마감·지연이 남아 있을 때만 한 번 더 알려줍니다. 알림을 누르면 창이 열립니다.<\/li>\n<li>메일은 매일 09:00 / 13:00 / 17:00과 Windows 로그인 때 자동으로 갱신됩니다.<\/li>\n<li>창을 닫아도 프로그램은 시계 옆 트레이에서 계속 실행됩니다. 완전히 끄려면 트레이 아이콘을 우클릭해서 <b>종료<\/b>를 누르세요.<\/li>\n<li>왼쪽 아래 <b>↻ 새로고침<\/b>이나 트레이 메뉴의 <b>지금 새로고침<\/b>으로 화면을 바로 새로 읽을 수 있습니다. (메일 자체는 위 시각에 Outlook에서 새로 읽어 옵니다.)<\/li><\/ul>\n\n<h3>8. 백업과 복원<\/h3>\n<p>직접 추가한 할 일은 이 PC의 프로그램 안에 저장됩니다. PC를 바꾸거나 프로그램을 다시 설치할 때는 왼쪽 아래의 <b>백업 저장<\/b>으로 파일을 받아 두었다가, 새로 설치한 뒤 <b>백업 복원<\/b>으로 되돌리세요.<\/p>\n\n<h3>9. 문제가 생겼을 때<\/h3>\n<table><tr><th>증상<\/th><th>확인할 것<\/th><\/tr>\n<tr><td>메일이 하나도 안 보임<\/td><td>Outlook이 켜져 있고 로그인되어 있는지 확인하세요. 상세 내용은 <code>C:\\MailTodo\\mailtodo.log<\/code>에 있습니다.<\/td><\/tr>\n<tr><td>회신할 메일이 0건<\/td><td>프로그램을 처음 켠 시점 이후에 받은 메일만 모읍니다. 제외 대상(참조, 자동 발송)도 확인하세요.<\/td><\/tr>\n<tr><td>알림이 안 뜸<\/td><td>Windows의 \"집중 지원(방해 금지)\"이 켜져 있는지, 알림 설정에서 이 프로그램이 허용되어 있는지 확인하세요.<\/td><\/tr>\n<tr><td>화면이 예전 모양<\/td><td>인터넷 연결을 확인하고 트레이의 \"지금 새로고침\"을 두 번 눌러 보세요.<\/td><\/tr>\n<tr><td>Outlook 보안 창이 계속 뜸<\/td><td>안티바이러스 설정 때문일 수 있습니다. 허용을 누르고 IT 담당자에게 문의하세요.<\/td><\/tr><\/table>\n\n<h3>10. 편의 기능<\/h3>\n<ul><li><b>검색<\/b>: 왼쪽 위 검색창(또는 / 키, Ctrl+F)에 단어를 입력하면 제목·프로젝트·메모·메일 요지에서 찾습니다. Esc로 지웁니다.<\/li>\n<li><b>빠른 추가<\/b>: N 키 또는 Ctrl+N으로 \"직접 추가\" 창을 엽니다. 프로그램이 켜져 있으면 어디서든 Ctrl+Alt+N으로 열 수 있습니다.<\/li>\n<li><b>할 일로 추가<\/b>: 회신할 메일·회신 대기 항목의 상세 화면에서 이 버튼을 누르면 그 메일에 대한 내 할 일이 만들어지고 Outlook 메일 열기 링크도 이어집니다.<\/li>\n<li><b>반복<\/b>: 기한이 있는 할 일에 매 평일·매주·매월을 지정하면 완료할 때 다음 할 일이 자동으로 만들어집니다.<\/li>\n<li><b>체크리스트<\/b>: 할 일 안에 단계를 적고 하나씩 체크합니다. 목록에 진행 상황(예: 1\/3)이 표시됩니다.<\/li>\n<li><b>어두운 화면·글자 크기<\/b>: 왼쪽 아래 버튼으로 바꿉니다. 설정은 기억됩니다.<\/li><\/ul>\n\n<h3>11. 삭제<\/h3>\n<p>Windows 설정 → 앱 → \"TO DO LIST\" → 제거. 자동 갱신 등록도 함께 지워집니다. 메일 정리 파일이 들어 있는 <code>C:\\MailTodo<\/code> 폴더는 필요 없으면 직접 삭제하세요.<\/p>\n";
 function manHtml(){if(!manOpen)return '';return '<div class="mdl" id="mnl"><div class="mdc man" role="dialog" aria-modal="true" aria-label="사용법"><div class="mdh">사용법</div><div class="mnb">'+MAN+'</div><div class="fr" style="margin-top:14px"><button class="b1" type="button" data-act="mnx">닫기</button></div></div></div>';}
 function fbHtml(){if(!fbOpen)return '';return '<div class="mdl" id="fbl"><div class="mdc" role="dialog" aria-modal="true" aria-label="피드백 보내기"><div class="mdh">피드백 보내기</div><p class="pmn" style="margin-top:0">불편한 점이나 바라는 기능을 적어 주세요. 보내기를 누르면 개발자에게 바로 전달됩니다. 할 일이나 메일 내용은 함께 전송되지 않습니다.</p><form id="fbf" style="display:flex;flex-direction:column;gap:10px"><select id="fb-k" aria-label="종류"><option>불편한 점</option><option>있었으면 하는 기능</option><option>오류 신고</option><option>기타</option></select><textarea id="fb-m" rows="6" maxlength="2000" placeholder="내용을 적어 주세요" required></textarea><input id="fb-n" maxlength="40" placeholder="이름 또는 부서 (선택)"><div id="fb-s" class="pmn" role="status"></div><div class="fr"><button class="b2" type="button" data-act="fbx">닫기</button><button class="b1" type="submit" id="fb-b">보내기</button></div></form></div></div>';}
 function addProj(n){n=String(n||'').trim();if(!n||n==='미분류'||n==='__none')return false;if(userProj.indexOf(n)>=0)return false;userProj.push(n);save('mt_pl',userProj);return true;}
@@ -479,7 +524,7 @@ function pmHtml(){if(!pmOpen)return '';var cn={};items().forEach(function(x){if(
   return '<div class="mdl" id="pml"><div class="mdc" role="dialog" aria-modal="true" aria-label="프로젝트 관리"><div class="mdh">프로젝트 관리</div><form id="pmf" class="pmf"><input id="pm-n" maxlength="40" placeholder="새 프로젝트 이름" autocomplete="off" required><button class="b1" type="submit">추가</button></form><ul class="pml">'+(rows||'<li class="pe">아직 프로젝트가 없습니다.</li>')+'</ul><div class="pmn">삭제해도 이미 그 프로젝트로 분류된 항목은 그대로 남습니다. 메일을 자동으로 분류하려면 projects.csv에 키워드를 추가하세요.</div><div class="fr"><button class="b2" type="button" data-act="pmx">닫기</button></div></div></div>';}
 function formHtml(){if(!formOpen)return '';var h=
     '<div class="mdl" id="mdl"><div class="mdc" role="dialog" aria-modal="true" aria-label="할 일 직접 추가"><div class="mdh">직접 추가</div><form id="f"><div class="dz" id="dz" tabindex="0" role="button" aria-label="메일 파일 올리기"><b>Outlook 메일 파일 올리기 (.msg / .eml)</b><span>여기로 끌어다 놓거나 눌러서 고르세요. 제목·날짜·요지·프로젝트를 자동으로 채웁니다. 여러 개를 한 번에 올리면 바로 추가됩니다.</span><input type="file" id="mf" accept=".msg,.eml" multiple hidden></div><div class="dzs" id="dzs" aria-live="polite"></div><label>구분<select id="f-type"><option value="todo">할 일 (업무, 받은 메일 등)</option><option value="wait">회신 대기 (내가 보낸 메일)</option></select></label>'+
-      '<label>내용<input id="f-title" required maxlength="120"></label><label>프로젝트 (선택)<input id="f-proj" list="pjl2" maxlength="40"></label><datalist id="pjl2">'+projList.map(function(n){return '<option value="'+esc(n)+'">';}).join('')+'</datalist><label>기한 (선택)<input id="f-due" type="date"></label><label>메모 (선택)<textarea id="f-note" rows="3" maxlength="1000"></textarea></label>'+'<label>중요도<select id="f-prio"><option value="n">보통</option><option value="h">높음</option><option value="l">낮음</option></select></label>'+
+      '<label>내용<input id="f-title" required maxlength="120"></label><label>프로젝트 (선택)<input id="f-proj" list="pjl2" maxlength="40"></label><datalist id="pjl2">'+projList.map(function(n){return '<option value="'+esc(n)+'">';}).join('')+'</datalist><label>기한 (선택)<input id="f-due" type="date"></label><label>메모 (선택)<textarea id="f-note" rows="3" maxlength="1000"></textarea></label>'+'<label>반복 (선택, 기한이 있어야 합니다)<select id="f-rep"><option value="">반복 안 함</option><option value="d">매 평일</option><option value="w">매주</option><option value="m">매월</option></select></label><label>중요도<select id="f-prio"><option value="n">보통</option><option value="h">높음</option><option value="l">낮음</option></select></label>'+
       '<label>등록일 / 보낸·받은 날짜<input id="f-date" type="date" value="'+today()+'"></label>'+
       '<div class="fr"><button class="b1" type="submit">추가</button><button class="b2" type="button" data-act="cancel">취소</button></div></form></div></div>';
   return h;
@@ -517,9 +562,9 @@ function render(){
   var hot=open(function(x){return x.prio==='h';}).length;
   var cnt={home:0,me:meN,all:waits.length+meN+todosN,wait:waits.length,todo:todosN,done:all.filter(function(x){return !x.trash&&x.done;}).length,trash:all.filter(function(x){return x.trash;}).length};
   var pset={};PROJRULES.forEach(function(r){if(r.name)pset[r.name]=1;});userProj.forEach(function(n){pset[n]=1;});all.forEach(function(x){if(x.proj)pset[x.proj]=1;});projList=Object.keys(pset).sort();
-  if(view==='home'){app.innerHTML=homeHtml(all,cnt,hot,dueNow)+formHtml()+pmHtml()+manHtml()+fbHtml();if(!formOpen)mi=null;wireForm();return;}
-  var list=all.filter(inView);
-  if(pfilter==='__none')list=list.filter(function(x){return !x.proj;});else if(pfilter)list=list.filter(function(x){return x.proj===pfilter;});
+  if(view==='home'&&!qry){app.innerHTML=homeHtml(all,cnt,hot,dueNow)+formHtml()+pmHtml()+manHtml()+fbHtml();if(!formOpen)mi=null;wireForm();return;}
+  var list=qry?all.filter(function(x){return !x.trash&&searchHit(x,qry);}):all.filter(inView);
+  if(qry){}else if(pfilter==='__none')list=list.filter(function(x){return !x.proj;});else if(pfilter)list=list.filter(function(x){return x.proj===pfilter;});
   var rk={h:0,n:1,l:2};list.sort(function(a,b){if(view==='all'){var ua=urg(a),ub=urg(b);return (rk[a.prio]-rk[b.prio])||(ua-ub);}if(a.kind==='todo'&&b.kind==='todo'&&a.dd!==b.dd)return a.dd-b.dd;return (rk[a.prio]-rk[b.prio])||(b.days-a.days);});
   if(!list.some(function(x){return x.id===sel;}))sel=list.length?list[0].id:null;
   var cur=list.filter(function(x){return x.id===sel;})[0]||null;
@@ -527,15 +572,15 @@ function render(){
   if(!DATA)h+='<div class="notice">아직 메일 데이터가 없습니다. MailTodo.ps1을 한 번 실행하면 채워집니다. 수동 추가는 지금도 쓸 수 있습니다.</div>';
   h+=sumHtml(all,hot,true);
   h+='<div class="body">';
-  h+='<div class="mid"><div class="mh"><div class="e">'+VN[view][1]+'</div></div><div class="ul"></div><div class="pfw"><label class="l" for="pf">프로젝트</label><button class="b2 sm" type="button" data-act="pm" style="margin-right:6px">＋ 추가</button><select id="pf" aria-label="프로젝트 필터"><option value="">전체</option>'+projList.map(function(n){return '<option value="'+esc(n)+'"'+(pfilter===n?' selected':'')+'>'+esc(n)+'</option>';}).join('')+'<option value="__none"'+(pfilter==='__none'?' selected':'')+'>미분류</option></select></div>';
+  h+='<div class="mid"><div class="mh"><div class="e">'+(qry?'검색 결과 · '+list.length+'건':VN[view][1])+'</div></div><div class="ul"></div><div class="pfw"><label class="l" for="pf">프로젝트</label><button class="b2 sm" type="button" data-act="pm" style="margin-right:6px">＋ 추가</button><select id="pf" aria-label="프로젝트 필터"><option value="">전체</option>'+projList.map(function(n){return '<option value="'+esc(n)+'"'+(pfilter===n?' selected':'')+'>'+esc(n)+'</option>';}).join('')+'<option value="__none"'+(pfilter==='__none'?' selected':'')+'>미분류</option></select></div>';
   if(!list.length)h+='<div class="empty">표시할 항목이 없습니다.</div>';
-  else if(view==='all'){
+  else if(view==='all'&&!qry){
     [['todo','내 할 일'],['me','회신할 메일'],['wait','회신 대기']].forEach(function(g){
       var arr=list.filter(function(x){return x.kind===g[0];});if(!arr.length)return;
       var ck=!!col['k:'+g[0]];
       h+='<button class="gh k-'+g[0]+'" data-act="gt" data-id="k:'+g[0]+'" aria-expanded="'+(ck?'false':'true')+'"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transform:rotate('+(ck?-90:0)+'deg);transition:transform .15s"><path d="M6 9l6 6 6-6"/></svg>'+g[1]+'<b>'+arr.length+'</b></button>'+(ck?'':arr.map(listItem).join(''));
     });
-  }else if(pfilter===''){
+  }else if(pfilter===''&&!qry){
     var gm={},go=[];PROJRULES.forEach(function(r){if(r.name&&!(r.name in gm)){gm[r.name]=[];go.push(r.name);}});userProj.forEach(function(n){if(!(n in gm)){gm[n]=[];go.push(n);}});
     list.forEach(function(x){var n=x.proj||'';if(!(n in gm)){gm[n]=[];go.push(n);}gm[n].push(x);});
     go=go.filter(function(n){return n!==''&&gm[n].length;}).concat(gm['']&&gm[''].length?['']:[]);
@@ -553,7 +598,7 @@ function wireForm(){
     var title=document.getElementById('f-title').value.trim(); if(!title)return;
     var id='x:'+Date.now();
     addProj(document.getElementById('f-proj').value);
-    manual.push({id:id,type:document.getElementById('f-type').value,title:title,project:document.getElementById('f-proj').value.trim(),base:document.getElementById('f-date').value||today(),due:document.getElementById('f-due').value||'',note:document.getElementById('f-note').value.trim(),done:false});
+    manual.push({id:id,type:document.getElementById('f-type').value,title:title,project:document.getElementById('f-proj').value.trim(),base:document.getElementById('f-date').value||today(),due:document.getElementById('f-due').value||'',note:document.getElementById('f-note').value.trim(),done:false,rep:document.getElementById('f-rep').value,rd:(document.getElementById('f-due').value?new Date(document.getElementById('f-due').value+'T00:00:00').getDate():0)});
     if(mi){var lm=manual[manual.length-1];lm.file=true;lm.from=mi.from;lm.summary=mi.summary;lm.preview=mi.preview;mi=null;}
     var pv=document.getElementById('f-prio').value; if(pv!=='n'){prio[id]=pv;save('mt_prio',prio);}
     save('mt_manual',manual); formOpen=false; if(view!=='all'&&view!=='home')view=manual[manual.length-1].type==='wait'?'wait':'todo'; save('mt_view2',view); sel=id; render();
@@ -583,11 +628,12 @@ function wireForm(){
   dz.addEventListener('drop',function(e){e.preventDefault();dz.classList.remove('on');handle(e.dataTransfer&&e.dataTransfer.files);});
   }
 }
+function addSub(id){var i=document.getElementById('sa');if(!i)return;var v=i.value.trim();if(!v)return;manual.forEach(function(q){if(q.id===id){q.subs=q.subs||[];q.subs.push({t:v,d:false});}});save('mt_manual',manual);render();var n=document.getElementById('sa');if(n)n.focus();}
 function setFlag(id,key,val){
   if(id.indexOf('m:')===0||id.indexOf('r:')===0){
     if(key==='done'){done[id]=val;save('mt_done',done);}else{hidden[id]=val;save('mt_hidden',hidden);}
   }else{
-    manual.forEach(function(x){if(x.id===id){if(key==='done')x.done=val;else x.deleted=val;}});save('mt_manual',manual);
+    var sp=false;manual.forEach(function(x){if(x.id===id){if(key==='done'){x.done=val;if(val&&x.type==='todo')sp=spawnNext(x);}else x.deleted=val;}});save('mt_manual',manual);if(sp)showToast('다음 반복 할 일을 만들었습니다');
   }
 }
 function cur(id){return items().filter(function(x){return x.id===id;})[0];}
@@ -603,6 +649,11 @@ app.addEventListener('click',function(e){
   else if(act==='rf'){var rb=e.target.closest('button');if(rb){rb.textContent='↻ 메일 가져오는 중…';rb.disabled=true;}
     if(/MailTodoApp\/3/.test(navigator.userAgent)){window.open('mailtodo-refresh://now');setTimeout(function(){(window.top||window).location.reload();},150000);}
     else (window.top||window).location.reload();}
+  else if(act==='th'){theme=theme==='dark'?'light':'dark';save('mt_theme',theme);applyLook();render();}
+  else if(act==='fs'){fsz=fsz===1?1.12:fsz===1.12?1.25:1;save('mt_fs',fsz);applyLook();render();}
+  else if(act==='mk'){var mx=cur(id);if(mx){var ex=manual.filter(function(q){return q.srcId===mx.id&&!q.deleted;})[0],nid;if(ex){nid=ex.id;showToast('이미 만들어 둔 할 일로 이동합니다');}else{nid='x:'+Date.now();manual.push({id:nid,type:'todo',title:(mx.kind==='me'?'회신: ':'재확인: ')+mx.title.replace(/^\s*((re|fw|fwd)\s*:\s*)+/i,''),project:mx.proj||'',base:today(),due:'',note:'',done:false,file:true,from:mx.who,summary:mx.summary||'',preview:mx.preview||'',entry:mx.entry||'',srcId:mx.id});save('mt_manual',manual);showToast('할 일에 추가했습니다. 기한을 정해 주세요');}qry='';view='todo';save('mt_view2',view);pfilter='';sel=nid;render();}}
+  else if(act==='sd'||act==='sx'){var si=parseInt(b.getAttribute('data-i'),10);manual.forEach(function(q){if(q.id===id&&q.subs&&q.subs[si]){if(act==='sd')q.subs[si].d=!q.subs[si].d;else q.subs.splice(si,1);}});save('mt_manual',manual);render();}
+  else if(act==='sa'){addSub(id);}
   else if(act==='fb'){fbOpen=true;render();setTimeout(function(){var x=document.getElementById('fb-m');if(x)x.focus();},30);}
   else if(act==='fbx'){fbOpen=false;render();}
   else if(act==='mnx'){manOpen=false;render();}
@@ -642,7 +693,21 @@ app.addEventListener('submit',function(e){
   manual.push({id:id,type:'todo',title:v,project:pj,base:today(),due:document.getElementById('qa-d').value||'',note:'',done:false});
   save('mt_manual',manual);render();var n=document.getElementById('qa-t');if(n)n.focus();
 });
-setInterval(function(){var a=document.activeElement;if(!formOpen&&!pmOpen&&!manOpen&&!fbOpen&&!(a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.value))))(window.top||window).location.reload();},300000);
+var qT=null;
+document.addEventListener('input',function(e){if(e.target.id!=='q')return;var v=e.target.value;clearTimeout(qT);qT=setTimeout(function(){qry=v.trim();render();var n=document.getElementById('q');if(n){n.focus();n.setSelectionRange(v.length,v.length);}},160);});
+document.addEventListener('keydown',function(e){
+  var t=e.target,typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT');
+  if(e.key==='Enter'&&t&&t.id==='sa'){e.preventDefault();addSub(t.getAttribute('data-id'));return;}
+  if(e.key==='Escape'&&t&&t.id==='q'){qry='';t.value='';render();return;}
+  if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&(e.key==='n'||e.key==='N')){e.preventDefault();window.__mtOpen();return;}
+  if(e.ctrlKey&&(e.key==='f'||e.key==='F')){e.preventDefault();var q=document.getElementById('q');if(q){q.focus();q.select();}return;}
+  if(typing||e.ctrlKey||e.metaKey||e.altKey||formOpen||pmOpen||manOpen||fbOpen)return;
+  if(e.key==='/'){e.preventDefault();var q2=document.getElementById('q');if(q2){q2.focus();q2.select();}}
+  else if(e.key==='n'||e.key==='N'){e.preventDefault();window.__mtOpen();}
+});
+window.__mtOpen=function(){if(formOpen||pmOpen||manOpen||fbOpen)return;formOpen=true;render();setTimeout(function(){var x=document.getElementById('f-title');if(x)x.focus();},30);};
+document.addEventListener('change',function(e){if(e.target.id!=='rp')return;var id=e.target.getAttribute('data-id'),v=e.target.value;manual.forEach(function(q){if(q.id===id){q.rep=v;if(v&&q.due)q.rd=new Date(q.due+'T00:00:00').getDate();q.spawned=false;}});save('mt_manual',manual);render();});
+setInterval(function(){var a=document.activeElement;if(!qry&&!formOpen&&!pmOpen&&!manOpen&&!fbOpen&&!(a&&(a.tagName==='TEXTAREA'||(a.tagName==='INPUT'&&a.value))))(window.top||window).location.reload();},300000);
 </script>
 </body>
 </html>
