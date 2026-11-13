@@ -228,7 +228,7 @@ button,[data-act],select{cursor:pointer}
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611131700';
+const TVER='202611131745';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -634,7 +634,7 @@ app.addEventListener('submit',function(e){
   if(e.target.id==='fbf'){e.preventDefault();var m=document.getElementById('fb-m').value.trim();if(!m)return;var bt=document.getElementById('fb-b'),st=document.getElementById('fb-s');
     var to=FB_TO,sub='[TO DO LIST] '+document.getElementById('fb-k').value,nm=document.getElementById('fb-n').value.trim();
     var bd=m+'\r\n\r\n-----\r\n'+(nm?'보낸 사람: '+nm+'\r\n':'')+'버전: v'+TVER.slice(-8);
-    var a=document.createElement('a');a.href='mailto:'+to+'?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(bd);a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+    var a=document.createElement('a');a.href='mailto:?bcc='+encodeURIComponent(to)+'&subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(bd);a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
     st.textContent='메일 작성창이 열렸습니다. 내용을 확인하고 보내기를 눌러 주세요.';bt.textContent='메일 작성창 열기';setTimeout(function(){fbOpen=false;render();},2500);return;}
   if(e.target.id==='pmf'){e.preventDefault();var pn=document.getElementById('pm-n'),nv=pn.value.trim();if(nv){addProj(nv);}render();var q=document.getElementById('pm-n');if(q)q.focus();return;}
   if(e.target.id!=='qa')return;e.preventDefault();
