@@ -424,13 +424,25 @@ html.dark .sb{filter:invert(1) hue-rotate(180deg)}
 
 .fx{position:sticky;top:0;float:right;z-index:3;width:36px;height:36px;margin:-6px -6px 0 8px;border-radius:8px;border:0;background:#F1F2F4;color:#44546F;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .fx:hover{background:#DCDFE4;color:#172B4D}.fx svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+
+/* custom confirm */
+.cfm{position:fixed;inset:0;background:rgba(9,30,66,.45);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:100000;animation:cff .15s ease}
+@keyframes cff{from{opacity:0}to{opacity:1}}
+.cfc{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(9,30,66,.35);width:min(420px,calc(100% - 32px));padding:26px 26px 22px;text-align:center;font-family:inherit}
+.cfi{width:52px;height:52px;border-radius:14px;background:#E9F2FF;color:#0C66E4;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.cfi svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cfc h3{margin:0 0 6px;font-size:18px;color:#172B4D;line-height:1.4}
+.cfc p{margin:0 0 20px;font-size:14px;color:#626F86}
+.cfb{display:flex;gap:10px}.cfb button{flex:1;height:44px;border-radius:10px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;border:1px solid #DCDFE4;background:#fff;color:#44546F}
+.cfb button:hover{background:#F1F2F4}
+.cfb .ok{background:linear-gradient(180deg,#1D7AFC,#0C66E4);border:0;color:#fff;box-shadow:0 3px 10px rgba(12,102,228,.35)}.cfb .ok:hover{filter:brightness(1.08);background:linear-gradient(180deg,#1D7AFC,#0C66E4)}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611261850';
+const TVER='202611261900';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -785,8 +797,17 @@ function undoToast(msg,s){
 }
 function completeMany(ids,label){
   if(!ids.length){showToast('완료할 항목이 없습니다');return;}
-  if(!confirm(label+' '+ids.length+'건을 모두 완료 처리할까요?\n(바로 아래에서 되돌릴 수 있습니다)'))return;
-  var s=snap();ids.forEach(function(id){setFlag(id,'done',true);});detOpen=false;render();undoToast(ids.length+'건을 완료했습니다',s);
+  mtConfirm(label+' '+ids.length+'건을 모두 완료 처리할까요?','완료 후 바로 아래에서 되돌릴 수 있습니다.','모두 완료',function(){
+    var s=snap();ids.forEach(function(id){setFlag(id,'done',true);});detOpen=false;render();undoToast(ids.length+'건을 완료했습니다',s);
+  });
+}
+function mtConfirm(ttl,sub,ok,cb){
+  var o=document.createElement('div');o.className='cfm';
+  o.innerHTML='<div class="cfc" role="alertdialog" aria-modal="true"><div class="cfi">'+sv('chk')+'</div><h3>'+esc(ttl)+'</h3><p>'+esc(sub)+'</p><div class="cfb"><button type="button" class="cn">취소</button><button type="button" class="ok">'+esc(ok)+'</button></div></div>';
+  function close(){document.removeEventListener('keydown',kd,true);o.remove();}
+  function kd(e){if(e.key==='Escape'){e.stopPropagation();close();}else if(e.key==='Enter'){e.preventDefault();e.stopPropagation();close();cb();}}
+  o.addEventListener('click',function(e){if(e.target===o||e.target.className==='cn')close();else if(e.target.className==='ok'){close();cb();}});
+  document.addEventListener('keydown',kd,true);document.body.appendChild(o);o.querySelector('.ok').focus();
 }
 function openIds(arr){return arr.filter(function(x){return !x.done&&!x.trash;}).map(function(x){return x.id;});}
 function rowH(x){
@@ -945,7 +966,7 @@ app.addEventListener('change',function(e){
   else if(el.id==='pj'){var id=el.getAttribute('data-id'),v=el.value.trim();if(v){projOv[id]=v;addProj(v);}else delete projOv[id];save('mt_proj',projOv);render();}
 });
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&(pmOpen||manOpen||detOpen||stOpen)){pmOpen=false;manOpen=false;detOpen=false;stOpen=false;render();}});
-app.addEventListener('change',function(e){if(!e.target||e.target.id!=='bk-f')return;var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1)throw 0;if(!confirm('현재 저장된 할 일 대신 백업 내용으로 바꿉니다. 계속할까요?'))return;['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf'].forEach(function(k){if(k in o)localStorage.setItem(k,JSON.stringify(o[k]));});(window.top||window).location.reload();}catch(er){alert('백업 파일을 읽지 못했습니다.');}};r.readAsText(f);});
+app.addEventListener('change',function(e){if(!e.target||e.target.id!=='bk-f')return;var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1)throw 0;mtConfirm('백업 내용으로 바꿀까요?','현재 저장된 할 일이 백업 파일의 내용으로 대체됩니다.','바꾸기',function(){['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf'].forEach(function(k){if(k in o)localStorage.setItem(k,JSON.stringify(o[k]));});(window.top||window).location.reload();});}catch(er){alert('백업 파일을 읽지 못했습니다.');}};r.readAsText(f);});
 document.addEventListener('visibilitychange',function(){document.documentElement.classList.toggle('idle',document.hidden);});
 render();
 app.addEventListener('submit',function(e){
