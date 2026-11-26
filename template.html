@@ -456,13 +456,18 @@ html.dark .sb{filter:invert(1) hue-rotate(180deg)}
 
 /* board column max width */
 .cols:not(.ls){grid-template-columns:repeat(auto-fit,minmax(260px,420px));justify-content:start}
+
+/* single-project board: cards flow in a grid */
+.cols:not(.ls){grid-template-columns:repeat(auto-fit,minmax(260px,1fr));justify-content:stretch}
+.cols.one:not(.ls){grid-template-columns:1fr}
+.cols.one:not(.ls) .cdl{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px;align-items:start}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611261940';
+const TVER='202611261950';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -800,7 +805,7 @@ function colsHtml(list){
   list.forEach(function(x){var n=x.proj||'';if(!(n in gm)){gm[n]=[];go.push(n);}gm[n].push(x);});
   go=go.filter(function(n){return n!==''&&gm[n].length;}).concat(gm['']&&gm[''].length?['']:[]);
   var canDone=view!=='done'&&view!=='trash';
-  return '<div class="cols'+(lay==='list'?' ls':'')+'">'+go.map(function(n){var open=gm[n].filter(function(x){return !x.done&&!x.trash;}).length;
+  return '<div class="cols'+(lay==='list'?' ls':'')+(go.length===1?' one':'')+'">'+go.map(function(n){var open=gm[n].filter(function(x){return !x.done&&!x.trash;}).length;
     return '<section class="cl"><div class="clh"><i style="background:'+(n?pjCol(n):'#8C9BAB')+'"></i><span>'+esc(n||'미분류')+'</span><b>'+gm[n].length+'</b>'+(canDone&&open?'<button data-act="pdone" data-id="'+esc(n)+'" title="이 프로젝트 전체 완료" aria-label="'+esc(n||'미분류')+' 전체 완료">'+sv('chk')+'</button>':'')+'</div><div class="cdl">'+gm[n].map(cardHtml).join('')+'</div></section>';}).join('')+'</div>';
 }
 function dtHtml(){
