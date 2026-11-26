@@ -461,13 +461,35 @@ html.dark .sb{filter:invert(1) hue-rotate(180deg)}
 .cols:not(.ls){grid-template-columns:repeat(auto-fit,minmax(260px,1fr));justify-content:stretch}
 .cols.one:not(.ls){grid-template-columns:1fr}
 .cols.one:not(.ls) .cdl{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px;align-items:start}
+
+/* dashboard richer */
+.cdx{padding:0 20px 14px;overflow:hidden;border-radius:12px;border-top:3px solid var(--c,#DCDFE4)}
+.cdx h3.cdh{margin:0 -20px 6px;padding:13px 20px;background:linear-gradient(90deg,var(--cb) 0%,rgba(255,255,255,0) 80%);border-bottom:1px solid #EEF0F3;font-size:17px;gap:10px}
+.ki.s{width:32px;height:32px;border-radius:9px;box-shadow:0 1px 2px rgba(9,30,66,.1)}.ki.s svg{width:18px;height:18px}
+.cdh .cn{background:var(--c);color:#fff;border-radius:999px;font-size:12.5px;font-weight:700;min-width:24px;height:22px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center}
+.cdh em{margin-left:auto}
+.hm-sec span{display:inline-flex;align-items:center;gap:7px}.hm-sec span:before{content:'';width:9px;height:9px;border-radius:50%;background:#8C9BAB}
+.hm-sec span.r:before{background:#C9372C;box-shadow:0 0 0 3px #FFECEB}.hm-sec span.o:before{background:#E2820B;box-shadow:0 0 0 3px #FFF1DC}
+.ring{display:flex;align-items:center;gap:16px;padding:14px 0 6px}
+.ring .rg{--p:0;width:74px;height:74px;border-radius:50%;background:conic-gradient(#6E5DC6 calc(var(--p)*1%),#E9E5FA 0);display:flex;align-items:center;justify-content:center;position:relative;flex:none}
+.ring .rg:before{content:'';position:absolute;inset:9px;border-radius:50%;background:#fff}
+.ring .rg b{position:relative;font-size:21px;color:#3F3399}.ring .rg small{font-size:12px}
+.ring strong{display:block;font-size:15px;color:#172B4D}.ring span{font-size:13px;color:#626F86}
+.pgr .bar{height:10px;border-radius:6px}.pgr .bar i{border-radius:6px}
+.kc{background:linear-gradient(135deg,var(--cb) 0%,#fff 62%)}
+
+/* compact KPI strip */
+.kp{gap:12px}
+.kc{padding:9px 16px;gap:12px;border-radius:10px}
+.kc .ki{width:38px;height:38px;border-radius:10px}.kc .ki svg{width:20px;height:20px}
+.kc b{font-size:28px;min-width:30px}.kc span{font-size:14px}.kc small{font-size:12px}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611261950';
+const TVER='202611262010';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -839,6 +861,7 @@ function rowH(x){
   var c=x.kind==='todo'?(x.due?(x.dd<0?{t:'지연 '+(-x.dd)+'일',c:'r'}:x.dd===0?{t:'오늘',c:'o'}:{t:md(x.due),c:''}):{t:'기한 없음',c:''}):{t:'D+'+x.days,c:x.days>=CHASE?'r':''};
   return '<div class="hm-row'+(x.prio==='h'?' hi':'')+'"><button class="hm-ck" data-act="toggle" data-id="'+esc(x.id)+'" aria-label="완료로 표시: '+esc(x.title)+'"></button><button class="hm-go" data-act="sel" data-id="'+esc(x.id)+'"><span class="hm-rt">'+esc(x.title)+'</span>'+(x.proj?'<span class="hm-pj">'+esc(x.proj)+'</span>':'')+(x.prio==='h'?'<span class="hm-st">중요</span>':'')+'<span class="hm-d2 '+c.c+'">'+esc(c.t)+'</span></button></div>';
 }
+function pgRing(names,pj){var tt=0,dd=0;names.forEach(function(n){tt+=pj[n].tot;dd+=pj[n].done;});var p=tt?Math.round(dd/tt*100):0;return '<div class="ring"><div class="rg" style="--p:'+p+'"><b>'+p+'<small>%</small></b></div><div><strong>전체 진행률</strong><span>진행 중인 프로젝트 '+names.length+'개 · 완료 '+dd+' / 전체 '+tt+'건</span></div></div>';}
 function homeHtml(all,cnt,hot,dueNow){
   var o=all.filter(function(x){return !x.trash&&!x.done;});
   var me=o.filter(function(x){return x.kind==='me';}), wt=o.filter(function(x){return x.kind==='wait';}), td=o.filter(function(x){return x.kind==='todo';});
@@ -854,14 +877,15 @@ function homeHtml(all,cnt,hot,dueNow){
     '<button class="kc" data-act="view" data-id="me" style="--c:#0C66E4;--cb:#E9F2FF"><i class="ki">'+sv('me')+'</i><b style="color:#0C66E4">'+me.length+'</b><div><span>회신할 메일</span><small>'+(me.length?'가장 오래된 메일 '+oldest(me)+'일 전':'없음')+'</small></div></button>'+
     '<button class="kc" data-act="view" data-id="wait" style="--c:#9E6A00;--cb:#FFF7D6"><i class="ki">'+sv('done')+'</i><b style="color:#9E6A00">'+wt.length+'</b><div><span>회신 대기</span><small>'+(wt.length?'가장 오래 기다린 메일 '+oldest(wt)+'일째':'없음')+'</small></div></button>'+
     '<button class="kc" data-act="view" data-id="all" style="--c:#1F845A;--cb:#DFFCF0"><i class="ki">'+sv('todo')+'</i><b>'+td.length+'</b><div><span>내 할 일</span><small>이번 주 마감 '+wk.length+' · 중요 '+hot+'</small></div></button></div>';
+  function cdh(ti,ic,c,cb,sub,cnt){return '<h3 class="cdh" style="--c:'+c+';--cb:'+cb+'"><i class="ki s">'+sv(ic)+'</i>'+ti+(cnt!=null?'<b class="cn">'+cnt+'</b>':'')+(sub?'<em>'+sub+'</em>':'')+'</h3>';}
   function sec(title,arr,cls){if(!arr.length)return '';arr=arr.slice().sort(function(a,b){return (a.due&&b.due?a.dd-b.dd:0)||(rk[a.prio]-rk[b.prio]);});
     return '<div class="hm-sec"><span class="'+cls+'">'+title+'</span><em>'+arr.length+'건</em></div>'+arr.slice(0,6).map(rowH).join('')+(arr.length>6?'<button class="hm-more" data-act="view" data-id="todo">+ '+(arr.length-6)+'건 더 보기</button>':'');}
   function mailCard(t,arr,k){var a=arr.slice().sort(function(x,y){return (rk[x.prio]-rk[y.prio])||(y.days-x.days);});
-    return '<div class="cdx"><h3>'+t+'<em>'+arr.length+'건</em></h3>'+(a.length?a.slice(0,6).map(rowH).join('')+(a.length>6?'<button class="hm-more" data-act="view" data-id="'+k+'">+ '+(a.length-6)+'건 더 보기</button>':''):'<div class="hm-s">해당하는 메일이 없습니다.</div>')+'</div>';}
-  h+='<div class="dg"><div class="dgc"><div class="cdx"><h3>내 할 일<em>기한이 급한 순서 · 왼쪽 동그라미로 완료</em></h3>'+(td.length?sec('지연',late,'r')+sec('오늘',tod,'o')+sec('이번 주',wk,'')+sec('나중 · 기한 없음',later,''):'<div class="hm-s">등록된 할 일이 없습니다. 오른쪽 위 "할 일 추가"를 눌러 보세요.</div>')+'</div>'+mailCard('회신할 메일',me,'me')+'</div>';
+    var st=k==='me'?['me','#0C66E4','#E9F2FF']:['done','#9E6A00','#FFF7D6'];return '<div class="cdx" style="--c:'+st[1]+'">'+cdh(t,st[0],st[1],st[2],'',arr.length)+(a.length?a.slice(0,6).map(rowH).join('')+(a.length>6?'<button class="hm-more" data-act="view" data-id="'+k+'">+ '+(a.length-6)+'건 더 보기</button>':''):'<div class="hm-s">해당하는 메일이 없습니다.</div>')+'</div>';}
+  h+='<div class="dg"><div class="dgc"><div class="cdx" style="--c:#1F845A">'+cdh('내 할 일','todo','#1F845A','#DFFCF0','기한이 급한 순서 · 왼쪽 동그라미로 완료',td.length)+''+(td.length?sec('지연',late,'r')+sec('오늘',tod,'o')+sec('이번 주',wk,'')+sec('나중 · 기한 없음',later,''):'<div class="hm-s">등록된 할 일이 없습니다. 오른쪽 위 "할 일 추가"를 눌러 보세요.</div>')+'</div>'+mailCard('회신할 메일',me,'me')+'</div>';
   var pj={};all.forEach(function(x){if(x.trash)return;var nm=x.proj||'미분류';var r=pj[nm]||(pj[nm]={tot:0,done:0});r.tot++;if(x.done)r.done++;});
   var names=Object.keys(pj).filter(function(nm){return pj[nm].tot-pj[nm].done>0;}).sort(function(a,b){return (pj[b].tot-pj[b].done)-(pj[a].tot-pj[a].done);}).slice(0,8);
-  h+='<div class="dgc"><div class="cdx"><h3>프로젝트 진행<em>완료한 비율</em></h3>'+(names.length?names.map(function(nm){var r=pj[nm],p=r.tot?Math.round(r.done/r.tot*100):0;return '<div class="pgr"><span>'+esc(nm)+'</span><div class="bar"><i style="width:'+p+'%;background:'+pjCol(nm==='미분류'?'':nm)+'"></i></div><em>'+r.done+'/'+r.tot+'</em></div>';}).join(''):'<div class="hm-s">항목이 없습니다.</div>')+'</div>'+mailCard('회신 대기',wt,'wait')+'</div></div>';
+  h+='<div class="dgc"><div class="cdx" style="--c:#6E5DC6">'+cdh('프로젝트 진행','dash','#6E5DC6','#F1EEFF','완료한 비율')+(names.length?pgRing(names,pj)+names.map(function(nm){var r=pj[nm],p=r.tot?Math.round(r.done/r.tot*100):0;return '<div class="pgr"><span>'+esc(nm)+'</span><div class="bar"><i style="width:'+p+'%;background:'+pjCol(nm==='미분류'?'':nm)+'"></i></div><em>'+r.done+'/'+r.tot+' · '+p+'%</em></div>';}).join(''):'<div class="hm-s">항목이 없습니다.</div>')+'</div>'+mailCard('회신 대기',wt,'wait')+'</div></div>';
   return h+'</div></div></div>';
 }
 function mtBar(){
