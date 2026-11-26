@@ -486,13 +486,15 @@ html.dark .sb{filter:invert(1) hue-rotate(180deg)}
 
 /* dark: sidebar already double-inverted, keep photo as is */
 html.dark .sb img{filter:none}
+
+.box .v.sm{white-space:pre-line}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611262020';
+const TVER='202611270840';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -556,7 +558,7 @@ function parseMsg(buf){
   return {subject:str('0037'),body:body,from:str('0C1A'),fromEmail:em,to:str('0E04'),date:date};
 }
 function cleanBody(b){var t=String(b||'').replace(/\r/g,'');var m=/^\s*(-{2,}\s*(original message|원본 메일)|from:\s|보낸 사람:|발신:|on .{5,80} wrote:)/im.exec(t);if(m&&m.index>20)t=t.slice(0,m.index);var sg=/^\s*(thanks\s*(&|and)\s*(best\s*)?regards|best\s+regards|kind\s+regards|with\s+regards|warm\s+regards)\b/im.exec(t);if(sg&&sg.index>10)t=t.slice(0,sg.index);return t;}
-function mkPreview(b){var t=cleanBody(b).split('\n').filter(function(l){return !/^\s*>/.test(l);}).join(' ').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();return t.length>320?t.slice(0,320)+'...':t;}
+function mkPreview(b){var t=cleanBody(b).split('\n').filter(function(l){return !/^\s*>/.test(l);}).map(function(l){return l.replace(/https?:\/\/\S+/g,'').replace(/[ \t\u00A0]+/g,' ').trim();}).join('\n').replace(/\n{3,}/g,'\n\n').trim();return t.length>600?t.slice(0,600)+'...':t;}
 function mkSummary(b){
   var t=cleanBody(b).replace(/https?:\/\/\S+/g,'');
   var greet=/^(dear|hi|hello|good (morning|afternoon|evening)|thanks|thank you|best regards|kind regards|regards|안녕하세요|감사합니다|수고|담당자)/i, sig=/(@|^(tel|mobile|phone|fax|t:|m:|e:|www))/i;
