@@ -386,13 +386,48 @@ html.dark .sb{filter:invert(1) hue-rotate(180deg)}
 .tbr .bc{-webkit-app-region:drag}
 
 .cl{background:transparent;padding:0}.clh{padding:6px 4px 8px;border-bottom:2px solid #DCDFE4}
+
+/* header/KPI polish */
+.ph{background:#fff;border:1px solid #DCDFE4;border-radius:12px;padding:12px 18px;position:relative;overflow:hidden}
+.ph:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#0C66E4}
+.ph>*{position:relative;z-index:1}
+.ph.phh{background:linear-gradient(120deg,#0C66E4 0%,#0A56C2 55%,#0747A6 100%);border:0;padding:20px 26px;min-height:92px;box-shadow:0 4px 14px rgba(12,102,228,.25)}
+.ph.phh:before{display:none}
+.ph.phh:after{content:'';position:absolute;right:-50px;top:-70px;width:280px;height:280px;border-radius:50%;background:rgba(255,255,255,.08)}
+.ph.phh h1{color:#fff;font-size:30px}.ph.phh .sm{color:#D6E6FF;font-size:15px}
+.ph.phh .sg{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3)}
+.ph.phh .sg button{color:#E1ECFF}.ph.phh .sg button.on{background:#fff;color:#0747A6}
+.ph.phh .gbt{background:#fff;border:0;color:#0747A6;font-weight:600}
+.kc{position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(9,30,66,.08)}
+.kc:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.ki{width:46px;height:46px;border-radius:12px;background:var(--cb);color:var(--c);display:flex;align-items:center;justify-content:center;flex:none}
+.ki svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.kc b{font-size:36px;min-width:40px}.kc span{font-size:15px}
+.cdx{box-shadow:0 1px 2px rgba(9,30,66,.06)}
+
+/* hero soft v2 */
+.ph.phh{background:radial-gradient(420px 160px at 92% 0%,rgba(76,154,255,.28),transparent 70%),radial-gradient(300px 140px at 55% 120%,rgba(12,102,228,.10),transparent 70%),linear-gradient(110deg,#FFFFFF 0%,#EEF5FF 55%,#DCEAFE 100%);border:1px solid #C9DDFB;box-shadow:0 6px 18px rgba(12,102,228,.10),inset 0 1px 0 #fff;padding:20px 26px 20px 30px;min-height:92px}
+.ph.phh:before{display:block;content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,#4C9AFF,#0C66E4 60%,#0747A6)}
+.ph.phh:after{content:'';position:absolute;right:210px;top:-60px;width:220px;height:220px;border-radius:50%;border:1px solid rgba(12,102,228,.14);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.7),rgba(12,102,228,.05));box-shadow:0 0 0 26px rgba(12,102,228,.04),0 0 0 54px rgba(12,102,228,.03)}
+.ph.phh h1{color:#0B2B5E;font-size:30px;letter-spacing:-.5px;background:linear-gradient(90deg,#0B2B5E,#0C66E4);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.ph.phh .sm{color:#44546F;font-size:15px}
+.ph.phh .sg{background:rgba(255,255,255,.75);border:1px solid #C9DDFB;backdrop-filter:blur(4px);box-shadow:0 1px 3px rgba(9,30,66,.08)}
+.ph.phh .sg button{color:#44546F}.ph.phh .sg button.on{background:#0C66E4;color:#fff;box-shadow:0 2px 6px rgba(12,102,228,.35)}
+.ph.phh .gbt{background:linear-gradient(180deg,#1D7AFC,#0C66E4);border:0;color:#fff;font-weight:600;box-shadow:0 3px 10px rgba(12,102,228,.35)}
+.ph.phh .gbt:hover{filter:brightness(1.08)}
+
+/* seg hover fix */
+.sg button:not(.on):hover{background:#F1F2F4;color:#172B4D}
+.sg button.on,.sg button.on:hover{background:#0C66E4;color:#fff;font-weight:600}
+.ph.phh .sg button:not(.on):hover{background:rgba(12,102,228,.08);color:#0C66E4}
+.ph.phh .sg button.on,.ph.phh .sg button.on:hover{background:#0C66E4;color:#fff}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611261750';
+const TVER='202611261820';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -700,7 +735,7 @@ function sbHtml(cnt,all){
 function topbar(cur){
   return '<div class="tbr"><div class="bc">'+sv('logo')+'TO DO LIST'+sv('chev')+'<b>'+esc(cur)+'</b></div><div class="sqx">'+sv('srch')+'<input id="q" type="search" value="'+esc(qry)+'" placeholder="검색  ( / 키 )" autocomplete="off" aria-label="검색"></div>'+(DATA?'<span class="syn">메일 갱신 '+esc(DATA.generated)+'</span>':'')+'<button class="ibt" data-act="rf" title="메일 새로 가져오기" aria-label="새로고침">'+sv('ref')+'</button><button class="pbt" data-act="open">'+sv('plus')+'할 일 추가</button></div>';
 }
-function segHtml(){return '<div class="sg" role="group" aria-label="보기 방식"><button data-act="view" data-id="home">'+sv('dash')+'개요</button><button data-act="lay" data-id="list" class="'+(lay==='list'?'on':'')+'">'+sv('all')+'목록</button><button data-act="lay" data-id="board" class="'+(lay!=='list'?'on':'')+'">'+sv('board')+'보드</button></div>';}
+function segHtml(home){return '<div class="sg" role="group" aria-label="보기 방식"><button data-act="view" data-id="home">'+sv('dash')+'개요</button><button data-act="lay" data-id="list" class="'+(!home&&lay==='list'?'on':'')+'">'+sv('all')+'목록</button><button data-act="lay" data-id="board" class="'+(!home&&lay!=='list'?'on':'')+'">'+sv('board')+'보드</button></div>';}
 function visibleList(all){
   var list=qry?all.filter(function(x){return !x.trash&&searchHit(x,qry);}):all.filter(inView);
   if(!qry){if(pfilter==='__none')list=list.filter(function(x){return !x.proj;});else if(pfilter)list=list.filter(function(x){return x.proj===pfilter;});}
@@ -765,11 +800,11 @@ function homeHtml(all,cnt,hot,dueNow){
   var n=late.length+tod.length;
   var h='<div class="hm">'+sbHtml(cnt,all)+'<div class="mc">'+topbar('대시보드')+'<div class="hm-main">';
   if(!DATA)h+='<div class="notice">아직 메일 데이터가 없습니다. MailTodo.ps1을 한 번 실행하면 채워집니다. 할 일은 지금도 쓸 수 있습니다.</div>';
-  h+='<div class="ph"><h1>대시보드</h1><span class="sm">'+d+' · '+(n?'오늘 처리할 일 '+n+'건':'오늘 급하게 처리할 일은 없습니다')+'</span>'+segHtml().replace('<button data-act="view" data-id="home">','<button data-act="view" data-id="home" class="on">')+'<button class="gbt" data-act="tdone">'+sv('chk')+'할 일 전체 완료</button></div>';
-  h+='<div class="kp"><button class="kc" data-act="view" data-id="todo"><b style="color:'+(n?'#C9372C':'#172B4D')+'">'+n+'</b><div><span>오늘 처리</span><small>지연 '+late.length+' · 오늘 마감 '+tod.length+'</small></div></button>'+
-    '<button class="kc" data-act="view" data-id="me"><b style="color:#0C66E4">'+me.length+'</b><div><span>회신할 메일</span><small>'+(me.length?'가장 오래된 메일 '+oldest(me)+'일 전':'없음')+'</small></div></button>'+
-    '<button class="kc" data-act="view" data-id="wait"><b style="color:#9E6A00">'+wt.length+'</b><div><span>회신 대기</span><small>'+(wt.length?'가장 오래 기다린 메일 '+oldest(wt)+'일째':'없음')+'</small></div></button>'+
-    '<button class="kc" data-act="view" data-id="all"><b>'+td.length+'</b><div><span>내 할 일</span><small>이번 주 마감 '+wk.length+' · 중요 '+hot+'</small></div></button></div>';
+  h+='<div class="ph phh"><h1>대시보드</h1><span class="sm">'+d+' · '+(n?'오늘 처리할 일 '+n+'건':'오늘 급하게 처리할 일은 없습니다')+'</span>'+segHtml(1).replace('<button data-act="view" data-id="home">','<button data-act="view" data-id="home" class="on">')+'<button class="gbt" data-act="tdone">'+sv('chk')+'할 일 전체 완료</button></div>';
+  h+='<div class="kp"><button class="kc" data-act="view" data-id="todo" style="--c:#C9372C;--cb:#FFECEB"><i class="ki">'+sv('dash')+'</i><b style="color:'+(n?'#C9372C':'#172B4D')+'">'+n+'</b><div><span>오늘 처리</span><small>지연 '+late.length+' · 오늘 마감 '+tod.length+'</small></div></button>'+
+    '<button class="kc" data-act="view" data-id="me" style="--c:#0C66E4;--cb:#E9F2FF"><i class="ki">'+sv('me')+'</i><b style="color:#0C66E4">'+me.length+'</b><div><span>회신할 메일</span><small>'+(me.length?'가장 오래된 메일 '+oldest(me)+'일 전':'없음')+'</small></div></button>'+
+    '<button class="kc" data-act="view" data-id="wait" style="--c:#9E6A00;--cb:#FFF7D6"><i class="ki">'+sv('done')+'</i><b style="color:#9E6A00">'+wt.length+'</b><div><span>회신 대기</span><small>'+(wt.length?'가장 오래 기다린 메일 '+oldest(wt)+'일째':'없음')+'</small></div></button>'+
+    '<button class="kc" data-act="view" data-id="all" style="--c:#1F845A;--cb:#DFFCF0"><i class="ki">'+sv('todo')+'</i><b>'+td.length+'</b><div><span>내 할 일</span><small>이번 주 마감 '+wk.length+' · 중요 '+hot+'</small></div></button></div>';
   function sec(title,arr,cls){if(!arr.length)return '';arr=arr.slice().sort(function(a,b){return (a.due&&b.due?a.dd-b.dd:0)||(rk[a.prio]-rk[b.prio]);});
     return '<div class="hm-sec"><span class="'+cls+'">'+title+'</span><em>'+arr.length+'건</em></div>'+arr.slice(0,6).map(rowH).join('')+(arr.length>6?'<button class="hm-more" data-act="view" data-id="todo">+ '+(arr.length-6)+'건 더 보기</button>':'');}
   function mailCard(t,arr,k){var a=arr.slice().sort(function(x,y){return (rk[x.prio]-rk[y.prio])||(y.days-x.days);});
