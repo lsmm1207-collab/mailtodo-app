@@ -483,13 +483,16 @@ html.dark .sb{filter:invert(1) hue-rotate(180deg)}
 .kc{padding:9px 16px;gap:12px;border-radius:10px}
 .kc .ki{width:38px;height:38px;border-radius:10px}.kc .ki svg{width:20px;height:20px}
 .kc b{font-size:28px;min-width:30px}.kc span{font-size:14px}.kc small{font-size:12px}
+
+/* dark: sidebar already double-inverted, keep photo as is */
+html.dark .sb img{filter:none}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611262010';
+const TVER='202611262020';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
