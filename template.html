@@ -519,13 +519,17 @@ html.dark .sb img{filter:none}
 .hm{background:#0B1220}
 .sb{box-shadow:none}
 .mc{border-radius:22px 0 0 22px;overflow:hidden;box-shadow:-8px 0 24px rgba(0,0,0,.25)}
+
+/* no OS drag regions: manual drag via JS (app-region swallowed clicks) */
+.tbr,.tbr *,.sblg,.sblg *,.sb *{-webkit-app-region:no-drag!important}
+.tbr{cursor:default}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611271050';
+const TVER='202611271100';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -1087,6 +1091,14 @@ setInterval(function(){var a=document.activeElement;if(!qry&&!formOpen&&!pmOpen&
 app.addEventListener('mouseover',function(e){var b=e.target.closest&&e.target.closest('.sb [data-tip]');hide();if(!b||window.innerWidth>1000)return;var r=b.getBoundingClientRect();tp=document.createElement('div');tp.className='sbtip';tp.textContent=b.getAttribute('data-tip');document.body.appendChild(tp);tp.style.left=(r.right+10)+'px';tp.style.top=(r.top+r.height/2-22)+'px';});
 app.addEventListener('mouseout',function(e){var n=e.relatedTarget;if(!n||!n.closest||!n.closest('.sb [data-tip]'))hide();});
 app.addEventListener('click',hide);})();
+
+(function(){
+  function okT(t){return t&&t.closest&&t.closest('.tbr,.sblg')&&!t.closest('button,input,a,.sqx,.wc');}
+  document.addEventListener('mousedown',function(e){if(e.button!==0||!okT(e.target))return;console.log('mtwin:dragstart');
+    var up=function(){console.log('mtwin:dragend');window.removeEventListener('mouseup',up,true);window.removeEventListener('blur',up,true);};
+    window.addEventListener('mouseup',up,true);window.addEventListener('blur',up,true);},true);
+  document.addEventListener('dblclick',function(e){if(okT(e.target))console.log('mtwin:wmax');},true);
+})();
 </script>
 </body>
 </html>
