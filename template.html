@@ -523,13 +523,20 @@ html.dark .sb img{filter:none}
 /* no OS drag regions: manual drag via JS (app-region swallowed clicks) */
 .tbr,.tbr *,.sblg,.sblg *,.sb *{-webkit-app-region:no-drag!important}
 .tbr{cursor:default}
+
+/* detail popup close button: floating outside the card corner */
+.dtw{position:relative;width:min(780px,100%);max-height:92vh;display:flex}
+.dtw .mdc.dt{width:100%}
+.dtw .dt-x{position:absolute;right:-12px;top:-12px;width:38px;height:38px;border-radius:50%;background:linear-gradient(180deg,#fff,#EEF3FB);color:#44546F;border:1px solid #D5DEEC;box-shadow:0 6px 16px rgba(9,30,66,.30);z-index:5;cursor:pointer;transition:transform .15s,background .15s,color .15s}
+.dtw .dt-x svg{width:17px;height:17px;stroke-width:2.2}
+.dtw .dt-x:hover{background:#E5493A;border-color:#E5493A;color:#fff;transform:rotate(90deg) scale(1.06)}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611271110';
+const TVER='202611271120';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -872,7 +879,7 @@ function colsHtml(list){
 }
 function dtHtml(){
   if(!detOpen)return '';var x=cur(sel);if(!x){detOpen=false;return '';}
-  return '<div class="mdl" id="dtl" data-act="dtbg"><div class="mdc dt" role="dialog" aria-modal="true" aria-label="상세 내용"><button class="dt-x" data-act="dtx" aria-label="닫기">'+sv('x')+'</button>'+detail(x)+'</div></div>';
+  return '<div class="mdl" id="dtl" data-act="dtbg"><div class="dtw"><button class="dt-x" data-act="dtx" aria-label="닫기" title="닫기 (Esc)">'+sv('x')+'</button><div class="mdc dt" role="dialog" aria-modal="true" aria-label="상세 내용">'+detail(x)+'</div></div></div>';
 }
 function snap(){return {m:JSON.stringify(manual),d:JSON.stringify(done),h:JSON.stringify(hidden)};}
 function undoToast(msg,s){
