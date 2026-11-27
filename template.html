@@ -572,13 +572,22 @@ html.dark .sb img{filter:none}
 .sub .qw .qd{position:absolute;right:-5px;top:-6px;width:18px;height:18px;border-radius:50%;border:0;background:#8C9BAB;color:#fff;font-size:12px;line-height:18px;padding:0;cursor:pointer;opacity:0;transition:opacity .15s}
 .sub .qw:hover .qd{opacity:1}.sub .qw .qd:hover{background:#C9372C}
 .sub .sqc{margin:10px 0 4px}
+
+/* high priority board cards */
+@keyframes mtHi{0%,100%{box-shadow:0 2px 6px rgba(201,55,44,.14),0 0 0 0 rgba(201,55,44,0)}50%{box-shadow:0 4px 16px rgba(201,55,44,.30),0 0 0 3px rgba(201,55,44,.10)}}
+.cd.hi{position:relative;background:linear-gradient(135deg,#FFF3F1 0%,#FFFFFF 62%)!important;border:1px solid #F3B9B3!important;border-left:4px solid #D93F32!important;overflow:hidden;animation:mtHi 2.6s ease-in-out infinite;transition:transform .15s}
+.cd.hi:before{content:'';position:absolute;right:-26px;top:-26px;width:84px;height:84px;border-radius:50%;background:radial-gradient(circle,rgba(217,63,50,.20),rgba(217,63,50,0) 70%);pointer-events:none}
+.cd.hi:hover{transform:translateY(-2px)}
+.cd.hi .t{color:#7A1D16}
+.cd.hi .m .u{display:inline-flex;align-items:center;gap:3px;background:#D93F32;color:#fff!important;border-radius:999px;padding:2px 9px 2px 8px;font-size:11.5px;font-weight:700;box-shadow:0 2px 6px rgba(217,63,50,.4)}
+@media (prefers-reduced-motion:reduce){.cd.hi{animation:none}}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611271440';
+const TVER='202611271500';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
