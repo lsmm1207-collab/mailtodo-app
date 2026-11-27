@@ -553,13 +553,19 @@ html.dark .sb img{filter:none}
 .sub .qc{border:1.5px dashed #9DB6DA;background:#F5F9FF;color:#0C66E4;border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}.sub .qc:hover{background:#E9F2FF;border-style:solid}
 .sub .sa{margin-top:12px}.sub .sa input{border-radius:12px;min-height:44px;border-color:#DCDFE4}
 .sub .sa input:focus{outline:none;border-color:#0C66E4;box-shadow:0 0 0 3px rgba(12,102,228,.15)}
+
+/* badge v2: clean tile, crisp text */
+.sbd{width:28px!important;height:28px!important;border-radius:9px!important;font-family:'Segoe UI','Malgun Gothic',system-ui,sans-serif!important;font-size:15px!important;font-weight:700!important;letter-spacing:0!important;line-height:1!important;text-shadow:none!important;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;background-image:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 60%)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.20),0 2px 6px rgba(0,0,0,.35)!important}
+.sbd.s2{font-size:12.5px!important;letter-spacing:.2px!important}
+.sbi:hover .sbd{transform:none!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),0 3px 9px rgba(0,0,0,.4)!important}
+.sbi.on .sbd{box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 0 0 2px #579DFF,0 3px 10px rgba(0,0,0,.4)!important}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611271320';
+const TVER='202611271345';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -859,7 +865,7 @@ function sbHtml(cnt,all){
   var h='<aside class="sb"><div class="sblg"><i>'+sv('logo')+'</i><span>TO DO LIST</span></div>';
   h+=NAVI.map(function(a){var k=a[0],on=view===k&&(k==='home'||!pfilter);return '<button class="sbi'+(on?' on':'')+'" data-act="view" data-id="'+k+'" data-tip="'+esc(VN[k][1])+'">'+sv(a[1])+'<span class="lb">'+VN[k][1]+'</span>'+(k==='home'||!cnt[k]?'':'<em>'+cnt[k]+'</em>')+'</button>';}).join('');
   h+='<div class="sbh">프로젝트<button data-act="pm" aria-label="프로젝트 추가" title="프로젝트 추가">'+sv('plus')+'</button></div><div class="sbhr"></div><div class="sbp">';
-  h+=projList.map(function(n){var on=pfilter===n&&view!=='home';return '<button class="sbi'+(on?' on':'')+'" data-act="pj" data-id="'+esc(n)+'" data-tip="'+esc(n)+'"><span class="sbd" style="background:'+pjCol(n)+'">'+esc(pjIni(n))+'</span><span class="nm">'+esc(n)+'</span>'+(pc[n]?'<em>'+pc[n]+'</em>':'')+'</button>';}).join('');
+  h+=projList.map(function(n){var on=pfilter===n&&view!=='home';return '<button class="sbi'+(on?' on':'')+'" data-act="pj" data-id="'+esc(n)+'" data-tip="'+esc(n)+'"><span class="sbd'+(pjIni(n).length>1?' s2':'')+'" style="background-color:'+pjCol(n)+'">'+esc(pjIni(n))+'</span><span class="nm">'+esc(n)+'</span>'+(pc[n]?'<em>'+pc[n]+'</em>':'')+'</button>';}).join('');
   h+='<button class="sbi add" data-act="pm" data-tip="프로젝트 추가">'+sv('plus')+'<span class="lb">프로젝트 추가</span></button></div><div class="sbsp"></div>';
   h+=[['done','done'],['trash','trash']].map(function(a){return '<button class="sbi'+(view===a[0]?' on':'')+'" data-act="view" data-id="'+a[0]+'" data-tip="'+VN[a[0]][1]+'">'+sv(a[1])+'<span class="lb">'+VN[a[0]][1]+'</span>'+(cnt[a[0]]?'<em>'+cnt[a[0]]+'</em>':'')+'</button>';}).join('');
   h+='<button class="sbi" data-act="th" data-tip="'+(theme==='dark'?'밝은 화면':'어두운 화면')+'">'+sv(theme==='dark'?'sun':'moon')+'<span class="lb">'+(theme==='dark'?'밝은 화면':'어두운 화면')+'</span></button>';
