@@ -567,13 +567,18 @@ html.dark .sb img{filter:none}
 .sbi:hover .sbf svg{fill-opacity:.3;transform:translateY(-1px) scale(1.08);filter:drop-shadow(0 0 7px currentColor)}
 .sbi.on .sbf{background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
 .sbi.on .sbf svg{fill-opacity:.42;filter:drop-shadow(0 0 8px currentColor)}
+
+.sub .qw{display:inline-flex;align-items:center;position:relative}
+.sub .qw .qd{position:absolute;right:-5px;top:-6px;width:18px;height:18px;border-radius:50%;border:0;background:#8C9BAB;color:#fff;font-size:12px;line-height:18px;padding:0;cursor:pointer;opacity:0;transition:opacity .15s}
+.sub .qw:hover .qd{opacity:1}.sub .qw .qd:hover{background:#C9372C}
+.sub .sqc{margin:10px 0 4px}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611271400';
+const TVER='202611271420';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -765,12 +770,18 @@ function listItem(x){
     '<div class="im"><div class="tt">'+esc(x.title)+(x.subs&&x.subs.length?'<span class="bdg">'+x.subs.filter(function(q){return q.d;}).length+'/'+x.subs.length+'</span>':'')+(x.rep?'<span class="bdg">반복</span>':'')+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+kc(x)+'">'+pt(x)+'</span></button>';
 }
 
+var STEPS=load('mt_steps',null);if(!Array.isArray(STEPS))STEPS=['자료 준비','내용 확인','검토 요청','제출'];
+function seedSteps(){try{if(load('mt_steps_seed',0))return;var f=[];(manual||[]).forEach(function(q){(q.subs||[]).forEach(function(z){if(z&&z.t&&f.indexOf(z.t)<0&&STEPS.indexOf(z.t)<0)f.push(z.t);});});STEPS=f.concat(STEPS).slice(0,30);save('mt_steps',STEPS);save('mt_steps_seed',1);}catch(e){}}
+function remStep(t){t=String(t||'').trim();if(!t)return;STEPS=STEPS.filter(function(z){return z!==t;});STEPS.unshift(t);if(STEPS.length>30)STEPS.length=30;save('mt_steps',STEPS);}
+seedSteps();
 function subHtml(x){
   var a=x.subs||[],dn=a.filter(function(q){return q.d;}).length,id=esc(x.id),pc=a.length?Math.round(dn/a.length*100):0;
   var h='<div class="sub"><div class="l"><span>체크리스트</span><span>'+(a.length?dn+'/'+a.length+' 완료':'')+'</span></div>';
   if(a.length)h+='<div class="sbar'+(pc===100?' ok':'')+'"><i style="width:'+pc+'%"></i></div>';
   if(a.length)h+='<div class="cklist">'+a.map(function(q,i){return '<div class="cks'+(q.d?' d':'')+'"><button type="button" class="stb" data-act="sd" data-id="'+id+'" data-i="'+i+'" aria-pressed="'+(q.d?'true':'false')+'"><i class="stc">'+(q.d?'✓':'')+'</i><span class="t">'+esc(q.t)+'</span></button><button type="button" class="sx" data-act="sx" data-id="'+id+'" data-i="'+i+'" aria-label="삭제">×</button></div>';}).join('')+'</div>';
-  else h+='<p class="sh">할 일을 여러 단계로 나누고, 단계를 눌러서 하나씩 체크하세요.</p><div class="sqc">'+['자료 준비','내용 확인','검토 요청','제출'].map(function(s){return '<button type="button" class="qc" data-act="sq" data-id="'+id+'" data-t="'+s+'">+ '+s+'</button>';}).join('')+'</div>';
+  else h+='<p class="sh">할 일을 여러 단계로 나누고, 단계를 눌러서 하나씩 체크하세요.</p>';
+  var have={};a.forEach(function(q){have[q.t]=1;});var lib=STEPS.filter(function(z){return !have[z];});
+  if(lib.length)h+='<div class="sqc">'+lib.map(function(z){return '<span class="qw"><button type="button" class="qc" data-act="sq" data-id="'+id+'" data-t="'+esc(z)+'">+ '+esc(z)+'</button><button type="button" class="qd" data-act="sqd" data-t="'+esc(z)+'" title="저장된 단계에서 삭제" aria-label="삭제">×</button></span>';}).join('')+'</div>';
   return h+'<div class="sa"><input id="sa" data-id="'+id+'" maxlength="80" placeholder="새 단계 입력 후 Enter"><button class="b2 sm" data-act="sa" data-id="'+id+'" type="button">추가</button></div></div>';
 }
 function pad(n){return (n<10?'0':'')+n;}
@@ -1046,7 +1057,7 @@ function wireForm(){
   dz.addEventListener('drop',function(e){e.preventDefault();dz.classList.remove('on');handle(e.dataTransfer&&e.dataTransfer.files);});
   }
 }
-function addSub(id){var i=document.getElementById('sa');if(!i)return;var v=i.value.trim();if(!v)return;manual.forEach(function(q){if(q.id===id){q.subs=q.subs||[];q.subs.push({t:v,d:false});}});save('mt_manual',manual);render();var n=document.getElementById('sa');if(n)n.focus();}
+function addSub(id){var i=document.getElementById('sa');if(!i)return;var v=i.value.trim();if(!v)return;manual.forEach(function(q){if(q.id===id){q.subs=q.subs||[];q.subs.push({t:v,d:false});}});remStep(v);save('mt_manual',manual);render();var n=document.getElementById('sa');if(n)n.focus();}
 function setFlag(id,key,val){
   if(id.indexOf('m:')===0||id.indexOf('r:')===0){
     if(key==='done'){done[id]=val;save('mt_done',done);}else{hidden[id]=val;save('mt_hidden',hidden);}
@@ -1075,11 +1086,12 @@ app.addEventListener('click',function(e){
   else if(act==='mk'){var mx=cur(id);if(mx){var ex=manual.filter(function(q){return q.srcId===mx.id&&!q.deleted;})[0],nid;if(ex){nid=ex.id;showToast('이미 만들어 둔 할 일로 이동합니다');}else{nid='x:'+Date.now();manual.push({id:nid,type:'todo',title:(mx.kind==='me'?'회신: ':'재확인: ')+mx.title.replace(/^\s*((re|fw|fwd)\s*:\s*)+/i,''),project:mx.proj||'',base:today(),due:'',note:'',done:false,file:true,from:mx.who,summary:mx.summary||'',preview:mx.preview||'',entry:mx.entry||'',srcId:mx.id});save('mt_manual',manual);showToast('할 일에 추가했습니다. 기한을 정해 주세요');}qry='';view='todo';save('mt_view2',view);pfilter='';sel=nid;detOpen=true;render();}}
   else if(act==='sd'||act==='sx'){var si=parseInt(b.getAttribute('data-i'),10);manual.forEach(function(q){if(q.id===id&&q.subs&&q.subs[si]){if(act==='sd')q.subs[si].d=!q.subs[si].d;else q.subs.splice(si,1);}});save('mt_manual',manual);render();}
   else if(act==='sa'){addSub(id);}
-  else if(act==='sq'){var qt=b.getAttribute('data-t');manual.forEach(function(q){if(q.id===id){q.subs=q.subs||[];q.subs.push({t:qt,d:false});}});save('mt_manual',manual);render();}
+  else if(act==='sq'){var qt=b.getAttribute('data-t');manual.forEach(function(q){if(q.id===id){q.subs=q.subs||[];q.subs.push({t:qt,d:false});}});remStep(qt);save('mt_manual',manual);render();}
+  else if(act==='sqd'){var dt=b.getAttribute('data-t');STEPS=STEPS.filter(function(z){return z!==dt;});save('mt_steps',STEPS);render();}
   else if(act==='fb'){fbOpen=true;render();setTimeout(function(){var x=document.getElementById('fb-m');if(x)x.focus();},30);}
   else if(act==='fbx'){fbOpen=false;render();}
   else if(act==='mnx'){manOpen=false;render();}
-  else if(act==='bkx'){var o={v:1,at:new Date().toISOString()};['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf'].forEach(function(k){try{var s=localStorage.getItem(k);if(s)o[k]=JSON.parse(s);}catch(er){}});var bl=new Blob([JSON.stringify(o)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='todo-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},500);}
+  else if(act==='bkx'){var o={v:1,at:new Date().toISOString()};['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf','mt_steps'].forEach(function(k){try{var s=localStorage.getItem(k);if(s)o[k]=JSON.parse(s);}catch(er){}});var bl=new Blob([JSON.stringify(o)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='todo-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},500);}
   else if(act==='bki'){var bf=document.getElementById('bk-f');if(bf)bf.click();}
   else if(act==='pmdel'){userProj=userProj.filter(function(n){return n!==id;});save('mt_pl',userProj);if(pfilter===id){pfilter='';save('mt_pf','');}render();}
   else if(act==='mdx'){if(e.target.id==='mdl'){formOpen=false;render();}}
