@@ -581,13 +581,21 @@ html.dark .sb img{filter:none}
 .cd.hi .t{color:#7A1D16}
 .cd.hi .m .u{display:inline-flex;align-items:center;gap:3px;background:#D93F32;color:#fff!important;border-radius:999px;padding:2px 9px 2px 8px;font-size:11.5px;font-weight:700;box-shadow:0 2px 6px rgba(217,63,50,.4)}
 @media (prefers-reduced-motion:reduce){.cd.hi{animation:none}}
+
+.ckm{display:inline-flex;align-items:center;gap:6px;background:#EAF1FF;color:#0C55C2;border-radius:99px;padding:2px 9px 2px 7px;font-size:11.5px;font-weight:700;vertical-align:middle;white-space:nowrap}
+.ckm svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ckm .ckb{width:34px;height:5px;border-radius:99px;background:rgba(12,102,228,.2);overflow:hidden;display:inline-block}
+.ckm .ckb i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#4C9AFF,#0C66E4);transition:width .3s}
+.ckm b{font-weight:700;font-variant-numeric:tabular-nums}
+.ckm.ok{background:#E3F6EC;color:#16784A}.ckm.ok .ckb{background:rgba(31,132,90,.22)}.ckm.ok .ckb i{background:linear-gradient(90deg,#4BCE97,#1F845A)}
+.it .tt .ckm{margin-left:8px}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611271500';
+const TVER='202611271520';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -776,7 +784,7 @@ function kc(x){return x.kind==='me'?'me':x.kind==='wait'?'wt':x.tier;}
 function listItem(x){
   var t=x.tier, circ=(x.kind==='todo'&&x.due)?'<div class="dc t-'+t+'"><div class="n" style="font-size:'+(x.dl.length>3?'15px':'20px')+'">'+esc(x.dl)+'</div><div class="u">'+(x.dd<0?'지연':'마감')+'</div></div>':(x.kind==='wait'||x.kind==='me')?'<div class="dc t-'+kc(x)+'"><div class="n">'+x.days+'</div><div class="u">일</div></div>':'<div class="dc t-t">'+ico('check','#2B4C8C',22)+'</div>';
   return '<button class="it'+(x.done?' dim':'')+(x.prio==='h'&&!x.done?' hi':'')+'" data-act="sel" data-id="'+esc(x.id)+'" aria-current="'+(x.id===sel?'true':'false')+'">'+circ+
-    '<div class="im"><div class="tt">'+esc(x.title)+(x.subs&&x.subs.length?'<span class="bdg">'+x.subs.filter(function(q){return q.d;}).length+'/'+x.subs.length+'</span>':'')+(x.rep?'<span class="bdg">반복</span>':'')+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+kc(x)+'">'+pt(x)+'</span></button>';
+    '<div class="im"><div class="tt">'+esc(x.title)+(x.subs&&x.subs.length?ckMini(x.subs):'')+(x.rep?'<span class="bdg">반복</span>':'')+'</div><div class="mm">'+esc([view==='all'?(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일'):'',x.who,(x.kind==='todo'&&x.due)?'기한 '+md(x.due):''].filter(Boolean).join(' · ')||(x.kind==='todo'?'할 일':''))+'</div></div>'+(x.prio==='h'?'<span class="star">중요</span>':x.prio==='l'?'<span class="lowt">낮음</span>':'')+'<span class="pill t-'+kc(x)+'">'+pt(x)+'</span></button>';
 }
 
 var STEPS=load('mt_steps',null);if(!Array.isArray(STEPS))STEPS=['자료 준비','내용 확인','검토 요청','제출'];
@@ -793,6 +801,7 @@ function subHtml(x){
   if(lib.length)h+='<div class="sqc">'+lib.map(function(z){return '<span class="qw"><button type="button" class="qc" data-act="sq" data-id="'+id+'" data-t="'+esc(z)+'">+ '+esc(z)+'</button><button type="button" class="qd" data-act="sqd" data-t="'+esc(z)+'" title="저장된 단계에서 삭제" aria-label="삭제">×</button></span>';}).join('')+'</div>';
   return h+'<div class="sa"><input id="sa" data-id="'+id+'" maxlength="80" placeholder="새 단계 입력 후 Enter"><button class="b2 sm" data-act="sa" data-id="'+id+'" type="button">추가</button></div></div>';
 }
+function ckMini(a){var d=a.filter(function(q){return q.d;}).length,n=a.length,pc=Math.round(d/n*100);return '<span class="ckm'+(d===n?' ok':'')+'" title="체크리스트 '+d+'/'+n+' 완료">'+sv('todo')+'<span class="ckb"><i style="width:'+pc+'%"></i></span><b>'+d+'/'+n+'</b></span>';}
 function pad(n){return (n<10?'0':'')+n;}
 function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
 function nextDue(due,rep,rd){
@@ -927,7 +936,7 @@ function cardHtml(x){
   else if(x.kind!=='todo')m.push('<span class="'+(x.days>=CHASE?'r':'')+'">D+'+x.days+'</span>');
   else if(!who)m.push('<span>기한 없음</span>');
   if(who)m.push('<span>'+esc(who)+'</span>');
-  if(x.subs&&x.subs.length)m.push('<span>'+x.subs.filter(function(q){return q.d;}).length+'/'+x.subs.length+'</span>');
+  if(x.subs&&x.subs.length)m.push(ckMini(x.subs));
   if(x.rep)m.push('<span>반복</span>');
   var kt=(view==='all'||qry)?'<span class="kt '+x.kind+'">'+(x.kind==='wait'?'회신 대기':x.kind==='me'?'회신할 메일':'할 일')+'</span>':'';
   return '<button class="cd'+(x.done?' dim':'')+(x.prio==='h'&&!x.done?' hi':'')+'" data-act="sel" data-id="'+esc(x.id)+'"><div class="t">'+esc(x.title)+'</div><div class="m">'+kt+m.join('')+'</div></button>';
