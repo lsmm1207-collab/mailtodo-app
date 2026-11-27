@@ -509,13 +509,18 @@ html.dark .sb img{filter:none}
 .hm{padding:8px;gap:8px;background:#EEF2F8}
 
 .wc .s2{display:none}.wc.mx .s1{display:none}.wc.mx .s2{display:block}
+
+/* flush layout: no outer frame */
+.hm{padding:0;gap:0;background:#F7F8F9}
+.sb{border-radius:0;box-shadow:6px 0 22px rgba(9,30,66,.30),0 0 0 1px rgba(255,255,255,.05) inset;z-index:5}
+.mc{border-radius:0;border:0;box-shadow:none}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611270930';
+const TVER='202611271040';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
