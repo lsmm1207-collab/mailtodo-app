@@ -635,13 +635,17 @@ html.dark .hm:before{filter:invert(1) hue-rotate(180deg)}
 html.dark .pbt,html.dark .ph.phh .gbt,html.dark .ph.phh .sg button.on,html.dark .b1,html.dark .ckm,html.dark .sub .sa .b2.sm:hover{filter:invert(1) hue-rotate(180deg)}
 html.dark .pbt,html.dark .ph.phh .gbt{box-shadow:0 0 0 1px rgba(120,170,255,.35),0 4px 14px rgba(12,102,228,.55)}
 html.dark .ph.phh .sg button.on{box-shadow:0 0 0 1px rgba(120,170,255,.35),0 2px 10px rgba(12,102,228,.55)}
+
+.stp .stv{padding:8px 10px 4px;margin-top:4px;border-top:1px solid #E9ECF1;font-size:12px;color:#8590A2}
+.sbu small:empty{display:none}
+.sbu small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;margin-top:1px}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611271740';
+const TVER='202611271800';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -941,10 +945,10 @@ function profHtml(){if(!profOpen)return '';
    +'<div class="crz"><i>'+sv('minus')+'</i><input type="range" id="cr-z" min="0" max="100" value="0" aria-label="확대"><i>'+sv('plus')+'</i></div>'
    +'<p class="crh">사진을 끌어서 위치를 맞추고, 슬라이더나 마우스 휠로 크기를 조절하세요.</p>'
    +'<div class="fr"><button class="b1" type="button" data-act="cropok">적용</button><button class="b2" type="button" data-act="cropx">취소</button></div></div></div></div>';}
-var d=profDraft||{};var ph=d.photo||PHOTO,nm=d.name!=null?d.name:(PROF.name||PNAME);
+var d=profDraft||{};var ph=d.photo||PHOTO,nm=d.name!=null?d.name:(PROF.name||PNAME),og=d.org!=null?d.org:(PROF.org||'');
   return '<div class="mdl" id="prl"><div class="dtw fw prw"><button type="button" class="dt-x" data-act="profx" aria-label="닫기" title="닫기 (Esc)">'+sv('x')+'</button><div class="mdc" role="dialog" aria-modal="true" aria-label="프로필 수정"><div class="mdh">프로필 수정</div>'
   +'<div class="prp"><button type="button" class="pra" data-act="profph" title="사진 바꾸기"><img src="'+esc(ph)+'" alt=""><span class="prc">'+sv('edit')+'</span></button><div class="prb"><button type="button" class="b2 sm" data-act="profph">사진 바꾸기</button><button type="button" class="b2 sm" data-act="profrs">기본 사진</button><small>정사각형으로 잘라 저장합니다.</small></div></div>'
-  +'<input type="file" id="pr-f" accept="image/*" hidden><label>이름<input id="pr-n" maxlength="20" value="'+esc(nm)+'" autocomplete="off"></label>'
+  +'<input type="file" id="pr-f" accept="image/*" hidden><label>이름<input id="pr-n" maxlength="20" value="'+esc(nm)+'" autocomplete="off"></label><label>소속 · 직함<input id="pr-o" maxlength="30" value="'+esc(og)+'" placeholder="예: DLHI 사업관리부 과장" autocomplete="off"></label>'
   +'<div class="fr"><button class="b1" type="button" data-act="profok">저장</button><button class="b2" type="button" data-act="profx">취소</button></div></div></div></div>';}
 function fbHtml(){if(!fbOpen)return '';return '<div class="mdl" id="fbl"><div class="mdc" role="dialog" aria-modal="true" aria-label="피드백 보내기"><div class="mdh">피드백 보내기</div><p class="pmn" style="margin-top:0">불편한 점이나 바라는 기능을 적어 주세요. 보내기를 누르면 개발자에게 바로 전달됩니다. 할 일이나 메일 내용은 함께 전송되지 않습니다.</p><form id="fbf" style="display:flex;flex-direction:column;gap:10px"><select id="fb-k" aria-label="종류"><option>불편한 점</option><option>있었으면 하는 기능</option><option>오류 신고</option><option>기타</option></select><textarea id="fb-m" rows="6" maxlength="2000" placeholder="내용을 적어 주세요" required></textarea><input id="fb-n" maxlength="40" placeholder="이름 또는 부서 (선택)"><div id="fb-s" class="pmn" role="status"></div><div class="fr"><button class="b2" type="button" data-act="fbx">닫기</button><button class="b1" type="submit" id="fb-b">보내기</button></div></form></div></div>';}
 function renProj(o,n){n=String(n||'').trim();if(!n||n===o||n==='미분류'||n==='__none')return false;
@@ -987,8 +991,8 @@ function sbHtml(cnt,all){
   h+=[['done','done'],['trash','trash']].map(function(a){return '<button class="sbi'+(view===a[0]?' on':'')+'" data-act="view" data-id="'+a[0]+'" data-tip="'+VN[a[0]][1]+'">'+sv(a[1])+'<span class="lb">'+VN[a[0]][1]+'</span>'+(cnt[a[0]]?'<em>'+cnt[a[0]]+'</em>':'')+'</button>';}).join('');
   h+='<button class="sbi" data-act="th" data-tip="'+(theme==='dark'?'밝은 화면':'어두운 화면')+'">'+sv(theme==='dark'?'sun':'moon')+'<span class="lb">'+(theme==='dark'?'밝은 화면':'어두운 화면')+'</span></button>';
   h+='<button class="sbi" data-act="st" data-tip="설정">'+sv('set')+'<span class="lb">설정</span></button>';
-  if(stOpen)h+='<div class="stp" role="menu"><button data-act="fs">글자 크기 · '+({1:'보통',1.12:'크게',1.25:'아주 크게'})[fsz]+'</button><button data-act="bkx" title="할 일·프로젝트·완료 내역을 파일로 저장">백업 저장</button><button data-act="bki" title="저장해 둔 백업 파일로 되돌리기">백업 복원</button><button data-act="man">사용법</button>'+(FB_ON?'<button data-act="fb">피드백</button>':'')+'</div>';
-  h+='<input type="file" id="bk-f" accept=".json" hidden><button type="button" class="sbu" data-act="prof" data-tip="프로필 수정"><img src="'+esc(PROF.photo||PHOTO)+'" alt=""><div>'+esc(PROF.name||PNAME)+'<small>v'+TVER.slice(-8)+'</small></div><i class="sbe">'+sv('edit')+'</i></button></aside>';
+  if(stOpen)h+='<div class="stp" role="menu"><button data-act="fs">글자 크기 · '+({1:'보통',1.12:'크게',1.25:'아주 크게'})[fsz]+'</button><button data-act="bkx" title="할 일·프로젝트·완료 내역을 파일로 저장">백업 저장</button><button data-act="bki" title="저장해 둔 백업 파일로 되돌리기">백업 복원</button><button data-act="man">사용법</button>'+(FB_ON?'<button data-act="fb">피드백</button>':'')+'<div class="stv">버전 v'+TVER.slice(-8)+'</div></div>';
+  h+='<input type="file" id="bk-f" accept=".json" hidden><button type="button" class="sbu" data-act="prof" data-tip="프로필 수정"><img src="'+esc(PROF.photo||PHOTO)+'" alt=""><div>'+esc(PROF.name||PNAME)+'<small>'+esc(PROF.org||'')+'</small></div><i class="sbe">'+sv('edit')+'</i></button></aside>';
   return h;
 }
 function topbar(cur){
@@ -1188,13 +1192,13 @@ app.addEventListener('click',function(e){
   else if(act==='sq'){var qt=b.getAttribute('data-t');manual.forEach(function(q){if(q.id===id){q.subs=q.subs||[];q.subs.push({t:qt,d:false});}});remStep(qt);save('mt_manual',manual);render();}
   else if(act==='sqd'){var dt=b.getAttribute('data-t');STEPS=STEPS.filter(function(z){return z!==dt;});save('mt_steps',STEPS);render();}
   else if(act==='fb'){fbOpen=true;render();setTimeout(function(){var x=document.getElementById('fb-m');if(x)x.focus();},30);}
-  else if(act==='prof'){profDraft={name:PROF.name||PNAME,photo:PROF.photo||''};profOpen=true;render();setTimeout(function(){var e=document.getElementById('pr-n');if(e){e.focus();e.select();}},30);}
+  else if(act==='prof'){profDraft={name:PROF.name||PNAME,org:PROF.org||'',photo:PROF.photo||''};profOpen=true;render();setTimeout(function(){var e=document.getElementById('pr-n');if(e){e.focus();e.select();}},30);}
   else if(act==='cropx'){profCrop=null;render();}
   else if(act==='cropok'){var c=profCrop;if(c){var im2=new Image();im2.onload=function(){try{var S=256,cv=document.createElement('canvas');cv.width=cv.height=S;var g=cv.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,S,S);var sx=(-CRF/2-c.tx)/c.sc+c.nw/2,sy=(-CRF/2-c.ty)/c.sc+c.nh/2,sz=CRF/c.sc;g.imageSmoothingQuality='high';g.drawImage(im2,sx,sy,sz,sz,0,0,S,S);profDraft=profDraft||{};profDraft.photo=cv.toDataURL('image/jpeg',0.9);profCrop=null;render();}catch(er){showToast('사진을 처리하지 못했습니다');}};im2.src=c.src;}}
   else if(act==='profx'){profCrop=null;profOpen=false;profDraft=null;render();}
-  else if(act==='profph'){var pn0=document.getElementById('pr-n');if(pn0&&profDraft)profDraft.name=pn0.value;var pf=document.getElementById('pr-f');if(pf)pf.click();}
-  else if(act==='profrs'){var pn1=document.getElementById('pr-n');profDraft={name:pn1?pn1.value:'',photo:''};render();}
-  else if(act==='profok'){var pn2=document.getElementById('pr-n');var nm2=pn2?pn2.value.trim():'';PROF={name:nm2||'',photo:(profDraft&&profDraft.photo)||''};if(!PROF.name)delete PROF.name;if(!PROF.photo)delete PROF.photo;save('mt_prof',PROF);profOpen=false;profDraft=null;render();showToast('프로필을 저장했습니다');}
+  else if(act==='profph'){var pn0=document.getElementById('pr-n'),po0=document.getElementById('pr-o');if(profDraft){if(pn0)profDraft.name=pn0.value;if(po0)profDraft.org=po0.value;}var pf=document.getElementById('pr-f');if(pf)pf.click();}
+  else if(act==='profrs'){var pn1=document.getElementById('pr-n'),po1=document.getElementById('pr-o');profDraft={name:pn1?pn1.value:'',org:po1?po1.value:'',photo:''};render();}
+  else if(act==='profok'){var pn2=document.getElementById('pr-n');var nm2=pn2?pn2.value.trim():'';var po2=document.getElementById('pr-o');PROF={name:nm2||'',org:po2?po2.value.trim():'',photo:(profDraft&&profDraft.photo)||''};if(!PROF.name)delete PROF.name;if(!PROF.org)delete PROF.org;if(!PROF.photo)delete PROF.photo;save('mt_prof',PROF);profOpen=false;profDraft=null;render();showToast('프로필을 저장했습니다');}
   else if(act==='fbx'){fbOpen=false;render();}
   else if(act==='mnx'){manOpen=false;render();}
   else if(act==='bkx'){var o={v:1,at:new Date().toISOString()};['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf','mt_steps','mt_prn','mt_prof'].forEach(function(k){try{var s=localStorage.getItem(k);if(s)o[k]=JSON.parse(s);}catch(er){}});var bl=new Blob([JSON.stringify(o)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='todo-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},500);}
@@ -1229,7 +1233,7 @@ app.addEventListener('change',function(e){
   else if(el.id==='pj'){var id=el.getAttribute('data-id'),v=el.value.trim();if(v){projOv[id]=v;addProj(v);}else delete projOv[id];save('mt_proj',projOv);render();}
 });
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&profOpen&&profCrop){profCrop=null;render();return;}if(e.key==='Escape'&&profOpen){profOpen=false;profDraft=null;render();return;}if(e.key==='Escape'&&(pmOpen||manOpen||detOpen||stOpen)){pmOpen=false;manOpen=false;detOpen=false;stOpen=false;render();}});
-app.addEventListener('change',function(e){if(e.target&&e.target.id==='pr-f'){var pf=e.target.files&&e.target.files[0];if(!pf)return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var nmv=document.getElementById('pr-n');profDraft=profDraft||{};profDraft.name=nmv?nmv.value:profDraft.name;var mn=CRF/Math.min(im.width,im.height);profCrop={src:rd.result,nw:im.width,nh:im.height,min:mn,sc:mn,tx:0,ty:0};e.target.value='';render();cropInit();};im.onerror=function(){showToast('사진을 읽지 못했습니다');};im.src=rd.result;};rd.readAsDataURL(pf);return;}
+app.addEventListener('change',function(e){if(e.target&&e.target.id==='pr-f'){var pf=e.target.files&&e.target.files[0];if(!pf)return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var nmv=document.getElementById('pr-n'),ogv=document.getElementById('pr-o');profDraft=profDraft||{};profDraft.name=nmv?nmv.value:profDraft.name;profDraft.org=ogv?ogv.value:profDraft.org;var mn=CRF/Math.min(im.width,im.height);profCrop={src:rd.result,nw:im.width,nh:im.height,min:mn,sc:mn,tx:0,ty:0};e.target.value='';render();cropInit();};im.onerror=function(){showToast('사진을 읽지 못했습니다');};im.src=rd.result;};rd.readAsDataURL(pf);return;}
 if(!e.target||e.target.id!=='bk-f')return;var f=e.target.files&&e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.v!==1)throw 0;mtConfirm('백업 내용으로 바꿀까요?','현재 저장된 할 일이 백업 파일의 내용으로 대체됩니다.','바꾸기',function(){['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf'].forEach(function(k){if(k in o)localStorage.setItem(k,JSON.stringify(o[k]));});(window.top||window).location.reload();});}catch(er){alert('백업 파일을 읽지 못했습니다.');}};r.readAsText(f);});
 document.addEventListener('visibilitychange',function(){document.documentElement.classList.toggle('idle',document.hidden);});
 render();
@@ -1249,7 +1253,7 @@ var qT=null;
 document.addEventListener('input',function(e){if(e.target.id!=='q')return;var v=e.target.value;clearTimeout(qT);qT=setTimeout(function(){qry=v.trim();render();var n=document.getElementById('q');if(n){n.focus();n.setSelectionRange(v.length,v.length);}},160);});
 document.addEventListener('keydown',function(e){
   var t=e.target,typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT');
-  if(t&&t.id==='pr-n'&&e.key==='Enter'){e.preventDefault();var b0=document.querySelector('[data-act=profok]');if(b0)b0.click();return;}
+  if(t&&(t.id==='pr-n'||t.id==='pr-o')&&e.key==='Enter'){e.preventDefault();var b0=document.querySelector('[data-act=profok]');if(b0)b0.click();return;}
   if(t&&t.id==='pm-e'){if(e.key==='Enter'){e.preventDefault();var nv3=t.value.trim(),o3=t.getAttribute('data-id');pmEdit='';if(nv3&&nv3!==o3){renProj(o3,nv3);showToast('프로젝트 이름을 "'+nv3+'"(으)로 바꿨습니다');}render();return;}if(e.key==='Escape'){e.stopPropagation();pmEdit='';render();return;}}
   if(e.key==='Enter'&&t&&t.id==='sa'){e.preventDefault();addSub(t.getAttribute('data-id'));return;}
   if(e.key==='Escape'&&t&&t.id==='q'){qry='';t.value='';render();return;}
