@@ -537,13 +537,29 @@ html.dark .sb img{filter:none}
 .sbd{background-image:linear-gradient(155deg,rgba(255,255,255,.38) 0%,rgba(255,255,255,0) 52%,rgba(0,0,0,.20) 100%)!important;border-radius:8px!important;box-shadow:0 3px 8px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.45),inset 0 -1px 0 rgba(0,0,0,.22);font-weight:800;letter-spacing:-.2px;text-shadow:0 1px 1px rgba(0,0,0,.25);transition:transform .15s,box-shadow .15s}
 .sbi:hover .sbd{transform:translateY(-1px) scale(1.05)}
 .sbi.on .sbd{box-shadow:0 0 0 2px rgba(255,255,255,.85),0 0 14px rgba(76,154,255,.7),0 4px 10px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.45)}
+
+/* checklist as tappable steps */
+.sub .sbar{height:6px;border-radius:4px;background:#E6EAF0;margin:2px 0 10px;overflow:hidden}.sub .sbar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#4C9AFF,#0C66E4);transition:width .25s}.sub .sbar.ok i{background:linear-gradient(90deg,#2DB887,#1F845A)}
+.sub .cklist{display:flex;flex-direction:column;gap:8px}
+.sub .cks{display:flex;align-items:stretch;gap:6px}
+.sub .stb{flex:1;display:flex;align-items:center;gap:12px;min-height:46px;padding:8px 14px;border:1.5px solid #DCDFE4;border-radius:12px;background:#fff;font:inherit;font-size:15px;color:#172B4D;text-align:left;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s}
+.sub .stb:hover{border-color:#4C9AFF;box-shadow:0 2px 8px rgba(12,102,228,.12);background:#F5F9FF}
+.sub .stc{width:24px;height:24px;border-radius:50%;border:2px solid #B3BFD0;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:14px;font-weight:700;color:#fff;flex:none;transition:all .15s}
+.sub .stb .t{flex:1;word-break:break-all}
+.sub .cks.d .stb{background:#EAF8F1;border-color:#9BDBC0}.sub .cks.d .stc{background:#1F845A;border-color:#1F845A}.sub .cks.d .stb .t{color:#6B7A8D;text-decoration:line-through}
+.sub .cks .sx{width:36px;border:0;background:transparent;color:#8C9BAB;font-size:18px;border-radius:10px;cursor:pointer}.sub .cks .sx:hover{background:#FFECEB;color:#C9372C}
+.sub .sh{margin:2px 0 10px;font-size:14px;color:#626F86}
+.sub .sqc{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.sub .qc{border:1.5px dashed #9DB6DA;background:#F5F9FF;color:#0C66E4;border-radius:999px;padding:7px 14px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}.sub .qc:hover{background:#E9F2FF;border-style:solid}
+.sub .sa{margin-top:12px}.sub .sa input{border-radius:12px;min-height:44px;border-color:#DCDFE4}
+.sub .sa input:focus{outline:none;border-color:#0C66E4;box-shadow:0 0 0 3px rgba(12,102,228,.15)}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611271150';
+const TVER='202611271320';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
@@ -724,7 +740,7 @@ function nextText(x){
   return '메일을 '+x.count+'회 보냈고, 마지막 발송 후 '+x.lastDays+'일 지났습니다.';
 }
 function stepsHtml(x){
-  var lab=['발송','1차 재촉','2차 재촉','회신'], n=Math.min(x.count,3), h='<div class="steps">';
+  var lab=['발송','1차 재촉','2차 재촉','회신'], n=Math.min(x.count,3), h='<div class="cklist">';
   lab.forEach(function(l,i){var on=i<n;h+='<div class="st'+(on?' on':'')+(on&&i===n-1?' cur':'')+'"><i></i>'+l+'</div>';});
   return h+'</div>';
 }
@@ -736,8 +752,12 @@ function listItem(x){
 }
 
 function subHtml(x){
-  var a=x.subs||[],dn=a.filter(function(q){return q.d;}).length,id=esc(x.id);
-  return '<div class="sub"><div class="l"><span>체크리스트</span><span>'+(a.length?dn+'/'+a.length+' 완료':'')+'</span></div><ul>'+a.map(function(q,i){return '<li class="'+(q.d?'d':'')+'"><button class="ck" data-act="sd" data-id="'+id+'" data-i="'+i+'" aria-label="'+(q.d?'완료 해제':'완료')+'">'+(q.d?'✓':'')+'</button><span class="t">'+esc(q.t)+'</span><button class="sx" data-act="sx" data-id="'+id+'" data-i="'+i+'" aria-label="삭제">×</button></li>';}).join('')+'</ul><div class="sa"><input id="sa" data-id="'+id+'" maxlength="80" placeholder="단계를 적고 Enter"><button class="b2 sm" data-act="sa" data-id="'+id+'" type="button">추가</button></div></div>';
+  var a=x.subs||[],dn=a.filter(function(q){return q.d;}).length,id=esc(x.id),pc=a.length?Math.round(dn/a.length*100):0;
+  var h='<div class="sub"><div class="l"><span>체크리스트</span><span>'+(a.length?dn+'/'+a.length+' 완료':'')+'</span></div>';
+  if(a.length)h+='<div class="sbar'+(pc===100?' ok':'')+'"><i style="width:'+pc+'%"></i></div>';
+  if(a.length)h+='<div class="cklist">'+a.map(function(q,i){return '<div class="cks'+(q.d?' d':'')+'"><button type="button" class="stb" data-act="sd" data-id="'+id+'" data-i="'+i+'" aria-pressed="'+(q.d?'true':'false')+'"><i class="stc">'+(q.d?'✓':'')+'</i><span class="t">'+esc(q.t)+'</span></button><button type="button" class="sx" data-act="sx" data-id="'+id+'" data-i="'+i+'" aria-label="삭제">×</button></div>';}).join('')+'</div>';
+  else h+='<p class="sh">할 일을 여러 단계로 나누고, 단계를 눌러서 하나씩 체크하세요.</p><div class="sqc">'+['자료 준비','내용 확인','검토 요청','제출'].map(function(s){return '<button type="button" class="qc" data-act="sq" data-id="'+id+'" data-t="'+s+'">+ '+s+'</button>';}).join('')+'</div>';
+  return h+'<div class="sa"><input id="sa" data-id="'+id+'" maxlength="80" placeholder="새 단계 입력 후 Enter"><button class="b2 sm" data-act="sa" data-id="'+id+'" type="button">추가</button></div></div>';
 }
 function pad(n){return (n<10?'0':'')+n;}
 function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
@@ -1039,6 +1059,7 @@ app.addEventListener('click',function(e){
   else if(act==='mk'){var mx=cur(id);if(mx){var ex=manual.filter(function(q){return q.srcId===mx.id&&!q.deleted;})[0],nid;if(ex){nid=ex.id;showToast('이미 만들어 둔 할 일로 이동합니다');}else{nid='x:'+Date.now();manual.push({id:nid,type:'todo',title:(mx.kind==='me'?'회신: ':'재확인: ')+mx.title.replace(/^\s*((re|fw|fwd)\s*:\s*)+/i,''),project:mx.proj||'',base:today(),due:'',note:'',done:false,file:true,from:mx.who,summary:mx.summary||'',preview:mx.preview||'',entry:mx.entry||'',srcId:mx.id});save('mt_manual',manual);showToast('할 일에 추가했습니다. 기한을 정해 주세요');}qry='';view='todo';save('mt_view2',view);pfilter='';sel=nid;detOpen=true;render();}}
   else if(act==='sd'||act==='sx'){var si=parseInt(b.getAttribute('data-i'),10);manual.forEach(function(q){if(q.id===id&&q.subs&&q.subs[si]){if(act==='sd')q.subs[si].d=!q.subs[si].d;else q.subs.splice(si,1);}});save('mt_manual',manual);render();}
   else if(act==='sa'){addSub(id);}
+  else if(act==='sq'){var qt=b.getAttribute('data-t');manual.forEach(function(q){if(q.id===id){q.subs=q.subs||[];q.subs.push({t:qt,d:false});}});save('mt_manual',manual);render();}
   else if(act==='fb'){fbOpen=true;render();setTimeout(function(){var x=document.getElementById('fb-m');if(x)x.focus();},30);}
   else if(act==='fbx'){fbOpen=false;render();}
   else if(act==='mnx'){manOpen=false;render();}
