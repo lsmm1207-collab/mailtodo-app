@@ -589,19 +589,23 @@ html.dark .sb img{filter:none}
 .ckm b{font-weight:700;font-variant-numeric:tabular-nums}
 .ckm.ok{background:#E3F6EC;color:#16784A}.ckm.ok .ckb{background:rgba(31,132,90,.22)}.ckm.ok .ckb i{background:linear-gradient(90deg,#4BCE97,#1F845A)}
 .it .tt .ckm{margin-left:8px}
+
+.pml li.pe2{gap:8px}.pml li.pe2 input{flex:1;min-width:0;height:36px;border:1.5px solid #4C9AFF;border-radius:8px;padding:0 10px;font:inherit;font-size:14px;outline:0;box-shadow:0 0 0 3px rgba(76,154,255,.18)}
+.pml li .b2.sm{flex:none}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <script>
 const DATA = /*__DATA__*/null;
-const TVER='202611271520';
+const TVER='202611271540';
 (function(){try{if(window.top!==window)return;fetch('https://raw.githubusercontent.com/lsmm1207-collab/mailtodo-app/main/template.html?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.text():'';}).then(function(s){var m=s.match(/const TVER='(\d+)'/);if(!m||m[1]<=TVER||s.length<20000||s.indexOf('/*__DATA__'+'*/null')<0)return;var j=JSON.stringify(DATA).replace(/</g,'\\u003c');s=s.replace('/*__DATA__'+'*/null',function(){return j;});var f=document.createElement('iframe');f.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#fff;z-index:99999';f.srcdoc=s;document.body.appendChild(f);}).catch(function(){});}catch(e){}})();
 const CHASE = (DATA && DATA.chaseDays) || 4;
 const app = document.getElementById('app');
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+var prn=load('mt_prn',{}),pmEdit='';function RN(n){var g=0;while(n&&prn[n]&&g++<10)n=prn[n];return n;}
 var done=load('mt_done',{}), hidden=load('mt_hidden',{}), manual=load('mt_manual',[]), view=load('mt_view2','home'), sel=null, formOpen=false, pmOpen=false, manOpen=false, fbOpen=false, userProj=load('mt_pl',[]), prio=load('mt_prio',{}), projOv=load('mt_proj',{}), pfilter=load('mt_pf',''), projList=[], trCache=load('mt_tr',{}), translator=null, trState='check', trPct=0, pending={}, col=load('mt_col',{});
 var qry='',theme=load('mt_theme','light'),fsz=load('mt_fs',1),mtoast='';
 function applyLook(){var r=document.documentElement;r.classList.toggle('dark',theme==='dark');r.style.zoom=fsz===1?'':String(fsz);r.style.setProperty('--z',String(fsz));}
@@ -741,20 +745,20 @@ function items(){
   var out=[];
   ((DATA&&DATA.items)||[]).forEach(function(it){
     var id='m:'+it.id, d=dayDiff(it.sentAt);
-    var pj=projOv[id]||it.project||'';
+    var pj=RN(projOv[id]||it.project||'');
     out.push({id:id,kind:'wait',src:'mail',title:it.subject,proj:pj,who:[pj,it.to].filter(Boolean).join(' · '),
       summary:it.summary||'',preview:it.preview||'',entry:it.lastId||it.id,first:it.sentAt,last:it.lastSentAt||it.sentAt,count:it.count||1,
       days:d,lastDays:dayDiff(it.lastSentAt||it.sentAt),tier:tier(d),done:!!done[id],trash:!!hidden[id],prio:prio[id]||'n'});
   });
   ((DATA&&DATA.inbox)||[]).forEach(function(it){
-    var id='r:'+it.id, d=dayDiff(it.receivedAt), pj=projOv[id]||it.project||'';
+    var id='r:'+it.id, d=dayDiff(it.receivedAt), pj=RN(projOv[id]||it.project||'');
     out.push({id:id,kind:'me',src:'mail',title:it.subject,proj:pj,who:[pj,it.from].filter(Boolean).join(' · '),
       summary:it.summary||'',preview:it.preview||'',entry:it.id,first:it.receivedAt,last:it.receivedAt,count:it.count||1,
       days:d,lastDays:d,tier:'w',done:!!done[id],trash:!!hidden[id],prio:prio[id]||'n'});
   });
   manual.forEach(function(x){
     var wait=x.type==='wait', d=dayDiff(x.base), di=dueInfo(x.due), tr=wait?tier(d):(di.k==='late'?'u':di.k==='today'?'h':di.k==='soon'?'w':'t');
-    out.push({id:x.id,kind:wait?'wait':'todo',src:'manual',file:!!x.file,title:x.title,proj:projOv[x.id]||x.project||'',who:[projOv[x.id]||x.project||'',x.from||''].filter(Boolean).join(' · '),summary:x.summary||'',preview:x.preview||'',first:x.base,last:x.base,count:1,
+    out.push({id:x.id,kind:wait?'wait':'todo',src:'manual',file:!!x.file,title:x.title,proj:RN(projOv[x.id]||x.project||''),who:[RN(projOv[x.id]||x.project||''),x.from||''].filter(Boolean).join(' · '),summary:x.summary||'',preview:x.preview||'',first:x.base,last:x.base,count:1,
       days:d,lastDays:d,tier:tr,due:x.due||'',dd:di.d,dl:di.l,note:x.note||'',subs:x.subs||[],rep:x.rep||'',entry:x.entry||'',done:!!x.done,trash:!!x.deleted,prio:prio[x.id]||'n'});
   });
   return out;
@@ -877,10 +881,18 @@ var FB_ON=true,FB_URL='https://docs.google.com/forms/d/e/1FAIpQLScpWWXV6S4hlsaG1
 var MAN="<h3>1. 처음 시작<\/h3>\n<ol><li>설치 파일(TODOLIST-Setup.exe)을 실행하면 자동으로 설치되고 프로그램이 열립니다.<\/li>\n<li>첫 실행 때 \"메일 연동 설정 중\" 화면이 1~2분 나옵니다. Outlook 보안 창이 뜨면 <b>허용<\/b>을 눌러 주세요.<\/li>\n<li>설정이 끝나면 대시보드가 열립니다. 이후에는 Windows를 켜면 프로그램이 자동으로 시작됩니다.<\/li><\/ol>\n<p class=\"n\">Outlook 클래식(데스크톱 버전)이 설치되어 있고 로그인되어 있어야 메일 연동이 됩니다.<\/p>\n\n<h3>2. 화면 구성<\/h3>\n<table><tr><th>메뉴<\/th><th>보이는 것<\/th><\/tr>\n<tr><td>대시보드<\/td><td>오늘 처리할 일, 내 할 일(기한 순), 메일 현황, 프로젝트별 진행률을 한 화면에서 봅니다.<\/td><\/tr>\n<tr><td>전체<\/td><td>내 할 일, 회신할 메일, 회신 대기를 색으로 구분해 모두 보여줍니다.<\/td><\/tr>\n<tr><td>할 일<\/td><td>직접 추가한 일만 보여줍니다.<\/td><\/tr>\n<tr><td>회신할 메일<\/td><td>내가 수신자(받는 사람)인데 아직 회신하지 않은 메일입니다.<\/td><\/tr>\n<tr><td>회신 대기<\/td><td>내가 보냈는데 아직 회신이 없는 메일입니다.<\/td><\/tr>\n<tr><td>완료 / 삭제함<\/td><td>완료하거나 지운 항목입니다. 언제든 되돌릴 수 있습니다.<\/td><\/tr><\/table>\n<p class=\"n\">메뉴 옆 빨간 숫자는 처리할 건수입니다. 0건이면 표시하지 않습니다.<\/p>\n\n<h3>3. 할 일 추가하기<\/h3>\n<ol><li>왼쪽 아래 <b>+ 직접 추가<\/b>를 누릅니다.<\/li>\n<li>내용을 적고, 필요하면 프로젝트·기한·메모·중요도를 고른 뒤 <b>추가<\/b>를 누릅니다.<\/li>\n<li>항목 왼쪽 동그라미를 누르면 완료로 넘어갑니다. 실수로 눌렀으면 \"완료\" 메뉴에서 되돌리세요.<\/li>\n<li>항목을 누르면 오른쪽에서 제목·기한·메모·프로젝트·중요도를 바로 고칠 수 있습니다. 입력창 밖을 누르면 저장됩니다.<\/li><\/ol>\n<p class=\"n\">추가 창에 Outlook 메일 파일(.msg, .eml)을 끌어다 놓으면 제목·날짜·프로젝트가 자동으로 채워집니다.<\/p>\n\n<h3>4. 메일 목록 (자동)<\/h3>\n<ul><li><b>회신할 메일<\/b>: 프로그램을 처음 켠 시점부터 받은 메일 중, 내가 받는 사람(TO)이고 아직 회신하지 않은 메일입니다. 참조(CC)와 자동 발송 메일은 제외합니다.<\/li>\n<li><b>회신 대기<\/b>: 보낸 편지함의 메일 중 같은 제목의 회신이 아직 없는 메일입니다.<\/li>\n<li>Outlook에서 회신하면 다음 갱신 때 목록에서 자동으로 사라집니다. 직접 정리하려면 <b>회신 완료<\/b>(또는 <b>회신 받음<\/b>) 버튼을 누르세요.<\/li>\n<li>항목 상세의 <b>Outlook에서 메일 열기<\/b>로 원본 메일을 바로 열 수 있습니다.<\/li><\/ul>\n\n<h3>5. 중요 표시<\/h3>\n<p>항목을 누르고 <b>중요도<\/b>를 \"높음\"으로 바꾸면 주황색 배경과 테두리로 눈에 띄게 표시되고, 대시보드 상단 \"중요\" 숫자에도 잡힙니다.<\/p>\n\n<h3>6. 프로젝트 관리<\/h3>\n<ul><li>왼쪽 아래 <b>＋ 프로젝트 추가<\/b>를 누르면 프로젝트를 추가·삭제할 수 있습니다. 할 일 목록 위의 <b>＋ 추가<\/b> 버튼으로도 열 수 있습니다.<\/li>\n<li>할 일을 추가할 때 새 이름을 입력해도 자동으로 등록됩니다.<\/li>\n<li>삭제해도 이미 그 프로젝트로 분류된 항목은 그대로 남습니다.<\/li>\n<li>메일을 프로젝트별로 자동 분류하려면 <code>C:\\MailTodo\\projects.csv<\/code>에 프로젝트 이름과 키워드(제목에 들어가는 단어, <code>|<\/code>로 구분)를 적습니다.<\/li><\/ul>\n\n<h3>7. 알림과 자동 갱신<\/h3>\n<ul><li>아침 8시 이후 처음 한 번, 오늘 마감·지연·중요 임박 건수와 메일 건수를 알려줍니다. 오후 3시 이후에는 마감·지연이 남아 있을 때만 한 번 더 알려줍니다. 알림을 누르면 창이 열립니다.<\/li>\n<li>메일은 매일 09:00 / 13:00 / 17:00과 Windows 로그인 때 자동으로 갱신됩니다.<\/li>\n<li>창을 닫아도 프로그램은 시계 옆 트레이에서 계속 실행됩니다. 완전히 끄려면 트레이 아이콘을 우클릭해서 <b>종료<\/b>를 누르세요.<\/li>\n<li>왼쪽 아래 <b>↻ 새로고침<\/b>이나 트레이 메뉴의 <b>지금 새로고침<\/b>으로 화면을 바로 새로 읽을 수 있습니다. (메일 자체는 위 시각에 Outlook에서 새로 읽어 옵니다.)<\/li><\/ul>\n\n<h3>8. 백업과 복원<\/h3>\n<p>직접 추가한 할 일은 이 PC의 프로그램 안에 저장됩니다. PC를 바꾸거나 프로그램을 다시 설치할 때는 왼쪽 아래의 <b>백업 저장<\/b>으로 파일을 받아 두었다가, 새로 설치한 뒤 <b>백업 복원<\/b>으로 되돌리세요.<\/p>\n\n<h3>9. 문제가 생겼을 때<\/h3>\n<table><tr><th>증상<\/th><th>확인할 것<\/th><\/tr>\n<tr><td>메일이 하나도 안 보임<\/td><td>Outlook이 켜져 있고 로그인되어 있는지 확인하세요. 상세 내용은 <code>C:\\MailTodo\\mailtodo.log<\/code>에 있습니다.<\/td><\/tr>\n<tr><td>회신할 메일이 0건<\/td><td>프로그램을 처음 켠 시점 이후에 받은 메일만 모읍니다. 제외 대상(참조, 자동 발송)도 확인하세요.<\/td><\/tr>\n<tr><td>알림이 안 뜸<\/td><td>Windows의 \"집중 지원(방해 금지)\"이 켜져 있는지, 알림 설정에서 이 프로그램이 허용되어 있는지 확인하세요.<\/td><\/tr>\n<tr><td>화면이 예전 모양<\/td><td>인터넷 연결을 확인하고 트레이의 \"지금 새로고침\"을 두 번 눌러 보세요.<\/td><\/tr>\n<tr><td>Outlook 보안 창이 계속 뜸<\/td><td>안티바이러스 설정 때문일 수 있습니다. 허용을 누르고 IT 담당자에게 문의하세요.<\/td><\/tr><\/table>\n\n<h3>10. 편의 기능<\/h3>\n<ul><li><b>검색<\/b>: 왼쪽 위 검색창(또는 / 키, Ctrl+F)에 단어를 입력하면 제목·프로젝트·메모·메일 요지에서 찾습니다. Esc로 지웁니다.<\/li>\n<li><b>빠른 추가<\/b>: N 키 또는 Ctrl+N으로 \"직접 추가\" 창을 엽니다. 프로그램이 켜져 있으면 어디서든 Ctrl+Alt+N으로 열 수 있습니다.<\/li>\n<li><b>할 일로 추가<\/b>: 회신할 메일·회신 대기 항목의 상세 화면에서 이 버튼을 누르면 그 메일에 대한 내 할 일이 만들어지고 Outlook 메일 열기 링크도 이어집니다.<\/li>\n<li><b>반복<\/b>: 기한이 있는 할 일에 매 평일·매주·매월을 지정하면 완료할 때 다음 할 일이 자동으로 만들어집니다.<\/li>\n<li><b>체크리스트<\/b>: 할 일 안에 단계를 적고 하나씩 체크합니다. 목록에 진행 상황(예: 1\/3)이 표시됩니다.<\/li>\n<li><b>어두운 화면·글자 크기<\/b>: 왼쪽 아래 버튼으로 바꿉니다. 설정은 기억됩니다.<\/li><\/ul>\n\n<h3>11. 삭제<\/h3>\n<p>Windows 설정 → 앱 → \"TO DO LIST\" → 제거. 자동 갱신 등록도 함께 지워집니다. 메일 정리 파일이 들어 있는 <code>C:\\MailTodo<\/code> 폴더는 필요 없으면 직접 삭제하세요.<\/p>\n";
 function manHtml(){if(!manOpen)return '';return '<div class="mdl" id="mnl"><div class="mdc man" role="dialog" aria-modal="true" aria-label="사용법"><div class="mdh">사용법</div><div class="mnb">'+MAN+'</div><div class="fr" style="margin-top:14px"><button class="b1" type="button" data-act="mnx">닫기</button></div></div></div>';}
 function fbHtml(){if(!fbOpen)return '';return '<div class="mdl" id="fbl"><div class="mdc" role="dialog" aria-modal="true" aria-label="피드백 보내기"><div class="mdh">피드백 보내기</div><p class="pmn" style="margin-top:0">불편한 점이나 바라는 기능을 적어 주세요. 보내기를 누르면 개발자에게 바로 전달됩니다. 할 일이나 메일 내용은 함께 전송되지 않습니다.</p><form id="fbf" style="display:flex;flex-direction:column;gap:10px"><select id="fb-k" aria-label="종류"><option>불편한 점</option><option>있었으면 하는 기능</option><option>오류 신고</option><option>기타</option></select><textarea id="fb-m" rows="6" maxlength="2000" placeholder="내용을 적어 주세요" required></textarea><input id="fb-n" maxlength="40" placeholder="이름 또는 부서 (선택)"><div id="fb-s" class="pmn" role="status"></div><div class="fr"><button class="b2" type="button" data-act="fbx">닫기</button><button class="b1" type="submit" id="fb-b">보내기</button></div></form></div></div>';}
+function renProj(o,n){n=String(n||'').trim();if(!n||n===o||n==='미분류'||n==='__none')return false;
+  Object.keys(prn).forEach(function(k){if(prn[k]===o)prn[k]=n;});prn[o]=n;save('mt_prn',prn);
+  userProj=userProj.map(function(z){return z===o?n:z;}).filter(function(z,i,a){return a.indexOf(z)===i;});save('mt_pl',userProj);
+  Object.keys(projOv).forEach(function(k){if(projOv[k]===o)projOv[k]=n;});save('mt_proj',projOv);
+  manual.forEach(function(q){if(q.project===o)q.project=n;});save('mt_manual',manual);
+  if(pfilter===o){pfilter=n;save('mt_pf',pfilter);}return true;}
 function addProj(n){n=String(n||'').trim();if(!n||n==='미분류'||n==='__none')return false;if(userProj.indexOf(n)>=0)return false;userProj.push(n);save('mt_pl',userProj);return true;}
 function pmHtml(){if(!pmOpen)return '';var cn={};items().forEach(function(x){if(x.trash||!x.proj)return;cn[x.proj]=(cn[x.proj]||0)+1;});
-  var auto={};PROJRULES.forEach(function(r){if(r.name)auto[r.name]=1;});
-  var rows=projList.map(function(n){var isU=userProj.indexOf(n)>=0,isA=!!auto[n];return '<li><span class="pn">'+esc(n)+'</span><em>'+(cn[n]||0)+'건'+(isA?' · 메일 자동 분류':'')+'</em>'+(isU&&!isA?'<button class="b2 sm" type="button" data-act="pmdel" data-id="'+esc(n)+'" aria-label="'+esc(n)+' 삭제">삭제</button>':'')+'</li>';}).join('');
+  var auto={};PROJRULES.forEach(function(r){if(r.name)auto[RN(r.name)]=1;});
+  var rows=projList.map(function(n){var isU=userProj.indexOf(n)>=0,isA=!!auto[n];
+    if(pmEdit===n)return '<li class="pe2"><input id="pm-e" data-id="'+esc(n)+'" value="'+esc(n)+'" maxlength="40" autocomplete="off"><button class="b1 sm" type="button" data-act="pmok" data-id="'+esc(n)+'">저장</button><button class="b2 sm" type="button" data-act="pmcx">취소</button></li>';
+    return '<li><span class="pn">'+esc(n)+'</span><em>'+(cn[n]||0)+'건'+(isA?' · 메일 자동 분류':'')+'</em><button class="b2 sm" type="button" data-act="pmed" data-id="'+esc(n)+'" aria-label="'+esc(n)+' 이름 변경">이름 변경</button>'+(isU&&!isA?'<button class="b2 sm" type="button" data-act="pmdel" data-id="'+esc(n)+'" aria-label="'+esc(n)+' 삭제">삭제</button>':'')+'</li>';}).join('');
   return '<div class="mdl" id="pml"><div class="mdc" role="dialog" aria-modal="true" aria-label="프로젝트 관리"><div class="mdh">프로젝트 관리</div><form id="pmf" class="pmf"><input id="pm-n" maxlength="40" placeholder="새 프로젝트 이름" autocomplete="off" required><button class="b1" type="submit">추가</button></form><ul class="pml">'+(rows||'<li class="pe">아직 프로젝트가 없습니다.</li>')+'</ul><div class="pmn">삭제해도 이미 그 프로젝트로 분류된 항목은 그대로 남습니다. 메일을 자동으로 분류하려면 projects.csv에 키워드를 추가하세요.</div><div class="fr"><button class="b2" type="button" data-act="pmx">닫기</button></div></div></div>';}
 function formHtml(){if(!formOpen)return '';var h=
     '<div class="mdl" id="mdl"><div class="dtw fw"><button type="button" class="dt-x" data-act="cancel" aria-label="닫기" title="닫기 (Esc)">'+sv('x')+'</button><div class="mdc" role="dialog" aria-modal="true" aria-label="할 일 직접 추가"><div class="mdh">직접 추가</div><form id="f"><div class="dz" id="dz" tabindex="0" role="button" aria-label="메일 파일 올리기"><b>Outlook 메일 파일 올리기 (.msg / .eml)</b><span>여기로 끌어다 놓거나 눌러서 고르세요. 제목·날짜·요지·프로젝트를 자동으로 채웁니다. 여러 개를 한 번에 올리면 바로 추가됩니다.</span><input type="file" id="mf" accept=".msg,.eml" multiple hidden></div><div class="dzs" id="dzs" aria-live="polite"></div><label>구분<select id="f-type"><option value="todo">할 일 (업무, 받은 메일 등)</option><option value="wait">회신 대기 (내가 보낸 메일)</option></select></label>'+
@@ -942,7 +954,7 @@ function cardHtml(x){
   return '<button class="cd'+(x.done?' dim':'')+(x.prio==='h'&&!x.done?' hi':'')+'" data-act="sel" data-id="'+esc(x.id)+'"><div class="t">'+esc(x.title)+'</div><div class="m">'+kt+m.join('')+'</div></button>';
 }
 function colsHtml(list){
-  var gm={},go=[];PROJRULES.forEach(function(r){if(r.name&&!(r.name in gm)){gm[r.name]=[];go.push(r.name);}});userProj.forEach(function(n){if(!(n in gm)){gm[n]=[];go.push(n);}});
+  var gm={},go=[];PROJRULES.forEach(function(r){var rn0=RN(r.name);if(r.name&&!(rn0 in gm)){gm[rn0]=[];go.push(rn0);}});userProj.forEach(function(n){if(!(n in gm)){gm[n]=[];go.push(n);}});
   list.forEach(function(x){var n=x.proj||'';if(!(n in gm)){gm[n]=[];go.push(n);}gm[n].push(x);});
   go=go.filter(function(n){return n!==''&&gm[n].length;}).concat(gm['']&&gm[''].length?['']:[]);
   var canDone=view!=='done'&&view!=='trash';
@@ -1023,7 +1035,7 @@ function render(){
   var dueNow=open(function(x){return x.kind==='todo'&&x.due&&x.dd<=0;}).length;
   var hot=open(function(x){return x.prio==='h';}).length;
   var cnt={home:0,me:meN,all:waits.length+meN+todosN,wait:waits.length,todo:todosN,done:all.filter(function(x){return !x.trash&&x.done;}).length,trash:all.filter(function(x){return x.trash;}).length};
-  var pset={};PROJRULES.forEach(function(r){if(r.name)pset[r.name]=1;});userProj.forEach(function(n){pset[n]=1;});all.forEach(function(x){if(x.proj)pset[x.proj]=1;});projList=Object.keys(pset).sort();
+  var pset={};PROJRULES.forEach(function(r){if(r.name)pset[RN(r.name)]=1;});userProj.forEach(function(n){pset[n]=1;});all.forEach(function(x){if(x.proj)pset[x.proj]=1;});projList=Object.keys(pset).sort();
   if(sel&&!detOpen&&false)sel=null;
   var tail=function(){var _sc=scSave();app.innerHTML=app.__h+formHtml()+pmHtml()+manHtml()+fbHtml()+dtHtml();scRestore(_sc);if(!formOpen)mi=null;wireForm();mtBar();if(detOpen){var cx=cur(sel);if(cx&&(cx.src==='mail'||cx.file))ensureTr(cx);}};
   if(view==='home'&&!qry){app.__h=homeHtml(all,cnt,hot,dueNow);tail();return;}
@@ -1112,8 +1124,11 @@ app.addEventListener('click',function(e){
   else if(act==='fb'){fbOpen=true;render();setTimeout(function(){var x=document.getElementById('fb-m');if(x)x.focus();},30);}
   else if(act==='fbx'){fbOpen=false;render();}
   else if(act==='mnx'){manOpen=false;render();}
-  else if(act==='bkx'){var o={v:1,at:new Date().toISOString()};['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf','mt_steps'].forEach(function(k){try{var s=localStorage.getItem(k);if(s)o[k]=JSON.parse(s);}catch(er){}});var bl=new Blob([JSON.stringify(o)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='todo-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},500);}
+  else if(act==='bkx'){var o={v:1,at:new Date().toISOString()};['mt_manual','mt_done','mt_hidden','mt_prio','mt_proj','mt_pl','mt_pf','mt_steps','mt_prn'].forEach(function(k){try{var s=localStorage.getItem(k);if(s)o[k]=JSON.parse(s);}catch(er){}});var bl=new Blob([JSON.stringify(o)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='todo-backup-'+today()+'.json';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},500);}
   else if(act==='bki'){var bf=document.getElementById('bk-f');if(bf)bf.click();}
+  else if(act==='pmed'){pmEdit=id;render();setTimeout(function(){var e=document.getElementById('pm-e');if(e){e.focus();e.select();}},30);}
+  else if(act==='pmcx'){pmEdit='';render();}
+  else if(act==='pmok'){var ie=document.getElementById('pm-e');var nv2=ie?ie.value.trim():'';pmEdit='';if(nv2&&nv2!==id){renProj(id,nv2);showToast('프로젝트 이름을 "'+nv2+'"(으)로 바꿨습니다');}render();}
   else if(act==='pmdel'){userProj=userProj.filter(function(n){return n!==id;});save('mt_pl',userProj);if(pfilter===id){pfilter='';save('mt_pf','');}render();}
   else if(act==='mdx'){if(e.target.id==='mdl'){formOpen=false;render();}}
   else if(act==='view'){view=id;save('mt_view2',view);sel=null;pfilter='';save('mt_pf','');chip='';detOpen=false;render();}
@@ -1160,6 +1175,7 @@ var qT=null;
 document.addEventListener('input',function(e){if(e.target.id!=='q')return;var v=e.target.value;clearTimeout(qT);qT=setTimeout(function(){qry=v.trim();render();var n=document.getElementById('q');if(n){n.focus();n.setSelectionRange(v.length,v.length);}},160);});
 document.addEventListener('keydown',function(e){
   var t=e.target,typing=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT');
+  if(t&&t.id==='pm-e'){if(e.key==='Enter'){e.preventDefault();var nv3=t.value.trim(),o3=t.getAttribute('data-id');pmEdit='';if(nv3&&nv3!==o3){renProj(o3,nv3);showToast('프로젝트 이름을 "'+nv3+'"(으)로 바꿨습니다');}render();return;}if(e.key==='Escape'){e.stopPropagation();pmEdit='';render();return;}}
   if(e.key==='Enter'&&t&&t.id==='sa'){e.preventDefault();addSub(t.getAttribute('data-id'));return;}
   if(e.key==='Escape'&&t&&t.id==='q'){qry='';t.value='';render();return;}
   if(e.ctrlKey&&!e.altKey&&!e.shiftKey&&(e.key==='n'||e.key==='N')){e.preventDefault();window.__mtOpen();return;}
